@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import "../screens/home.dart";
+import '../screens/auditorium_selection_screen.dart';
 import '../constants/colors.dart';
 
 class AppRoutes extends StatefulWidget {
@@ -14,7 +15,7 @@ class _AppRoutesState extends State<AppRoutes> {
   int currentTab = 0;
   final List<Widget> screens = [
     const HomePage(title: "Home"),
-    const Placeholder(),
+    const AuditoriumSelectionScreen(title: "Chọn rạp chiếu"),
     const Placeholder(),
     const Placeholder(),
   ];
@@ -45,6 +46,10 @@ class _AppRoutesState extends State<AppRoutes> {
           currentIndex: currentTab,
           selectedItemColor: colorPrimary, // Màu của icon khi được chọn
           unselectedItemColor: Colors.grey, // Màu của icon khi không được chọn
+          showUnselectedLabels: true, // Hiển thị label khi không được chọn
+          selectedFontSize: 12, // Kích thước font chữ khi được chọn
+          unselectedFontSize: 12, // Kích thước font chữ khi không được chọn
+          type: BottomNavigationBarType.fixed,
           onTap: (index) {
             setState(() {
               currentTab = index;
@@ -54,19 +59,19 @@ class _AppRoutesState extends State<AppRoutes> {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.movie),
-              label: 'Movies',
+              label: 'Chọn phim',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.place),
-              label: 'Auditorim',
+              label: 'Chọn rạp',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.fastfood),
-              label: 'Popcorn',
+              label: 'Bắp nước',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
-              label: 'Profile',
+              label: 'Tôi',
             ),
           ],
         ),
