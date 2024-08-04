@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/movie.dart';
-import '../screens/movie_detail_screen.dart'; // Import your detail screen
+import '../screens/movie_detail_screen.dart';
 
 class MoviePoster extends StatelessWidget {
   const MoviePoster({super.key, required this.movie});
@@ -19,6 +19,8 @@ class MoviePoster extends StatelessWidget {
           ),
         );
       },
+      splashColor: Colors.transparent, // Add a splash color for feedback
+      highlightColor: Colors.transparent, // Ensure the highlight color is transparent if needed
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, // Align the column content to the start
         children: [
