@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
+import '../models/movie.dart';
+import '../widgets/movie_poster.dart';
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
+  HomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -14,24 +18,42 @@ class HomePage extends StatefulWidget {
 
   final String title;
 
+  final List<Movie> movies = [
+    Movie(
+      id: 1,
+      title: "The Shawshank Redemption",
+      imageUrl:
+          "https://scpc.com.vn/wp-content/uploads/2023/05/Lat-mat-6.2.jpg",
+      year: 1994,
+    ),
+    Movie(
+      id: 2,
+      title: "The Godfather",
+      imageUrl:
+          "https://scpc.com.vn/wp-content/uploads/2023/05/Lat-mat-6.2.jpg",
+      year: 1972,
+    ),
+    Movie(
+      id: 3,
+      title: "The Dark Knight",
+      imageUrl:
+          "https://scpc.com.vn/wp-content/uploads/2023/05/Lat-mat-6.2.jpg",
+      year: 2008,
+    ),
+    Movie(
+      id: 4,
+      title: "12 Angry",
+      imageUrl:
+          "https://scpc.com.vn/wp-content/uploads/2023/05/Lat-mat-6.2.jpg",
+      year: 1957,
+    )
+  ];
+
   @override
   State<HomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<HomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -45,7 +67,7 @@ class _MyHomePageState extends State<HomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: colorPrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -53,37 +75,39 @@ class _MyHomePageState extends State<HomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text(
+                "Movies",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: widget.movies.map((movie) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal:
+                              8.0), // Adjust the horizontal padding as needed
+                      child: MoviePoster(movie: movie),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

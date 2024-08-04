@@ -13,14 +13,14 @@ class AppRoutes extends StatefulWidget {
 class _AppRoutesState extends State<AppRoutes> {
   int currentTab = 0;
   final List<Widget> screens = [
-    const HomePage(title: "Home"),
+    HomePage(title: "Home"),
     const Placeholder(),
     const Placeholder(),
     const Placeholder(),
   ];
 
   final pageStorageBucket = PageStorageBucket();
-  Widget currentScreen = const HomePage(title: "Home");
+  Widget currentScreen = HomePage(title: "Home");
 
   @override
   void initState() {
