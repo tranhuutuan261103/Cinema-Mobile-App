@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import './routes/app_routes.dart';
 import './screens/booking_screen.dart';
 import './screens/province_selection_screen.dart';
+import './providers/province_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => ProvinceProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -18,14 +21,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 255, 255)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 255, 255, 255)),
         useMaterial3: true,
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => const AppRoutes(),
         '/booking': (context) => BookingScreen(),
-        '/city': (context) => const ProvinceSelectionScreen(title: "Chọn tỉnh thành"),
+        '/city': (context) =>
+            const ProvinceSelectionScreen(title: "Chọn tỉnh thành"),
       },
     );
   }

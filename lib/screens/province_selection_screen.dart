@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../constants/colors.dart'; // Ensure you import the color constants
-import '../models/province.dart'; // Import the model to represent provinces
-import '../services/province_service.dart'; // Import the service to fetch provinces
+import 'package:provider/provider.dart';
+import '../constants/colors.dart';
+import '../providers/province_provider.dart';
 
 class ProvinceSelectionScreen extends StatefulWidget {
   final String title;
@@ -10,16 +9,18 @@ class ProvinceSelectionScreen extends StatefulWidget {
   const ProvinceSelectionScreen({super.key, required this.title});
 
   @override
-  State<ProvinceSelectionScreen> createState() => _ProvinceSelectionState();
+  _ProvinceSelectionScreenState createState() =>
+      _ProvinceSelectionScreenState();
 }
 
-class _ProvinceSelectionState extends State<ProvinceSelectionScreen> {
-  late Future<List<Province>> _provincesFuture;
-
+class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
   @override
   void initState() {
     super.initState();
-    _provincesFuture = ProvinceService().getProvinces();
+    // Fetch provinces when the widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProvinceProvider>(context, listen: false).getProvinces();
+    });
   }
 
   @override
@@ -44,7 +45,6 @@ class _ProvinceSelectionState extends State<ProvinceSelectionScreen> {
             ),
             TextButton(
               onPressed: () {
-                // Handle cancel button press
                 Navigator.pop(context);
               },
               child: const Text(
@@ -57,59 +57,51 @@ class _ProvinceSelectionState extends State<ProvinceSelectionScreen> {
             ),
           ],
         ),
-        elevation: 0, // Optional: Remove shadow from AppBar
-        toolbarHeight: 60, // Optional: Adjust height of AppBar
-        leading: null, // Remove the default back button
+        elevation: 0,
+        toolbarHeight: 60,
+        leading: null,
       ),
-      body: Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Container(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: FutureBuilder(
-                        future: _provincesFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox(
-                              width: double.infinity,
-                              child: LinearProgressIndicator(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox(
+            width: double.infinity,
+            child: Consumer<ProvinceProvider>(
+              builder: (context, provinceProvider, child) {
+                if (provinceProvider.isLoading) {
+                  return const SizedBox(
+                    width: double.infinity,
+                    child: LinearProgressIndicator(),
+                  );
+                } else {
+                  final provinces = provinceProvider.provinces;
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Container(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: provinces.map((province) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: InkWell(
+                                onTap: () {
+                                  provinceProvider.setSelectedProvince(province);
+                                  Navigator.pop(context, province);
+                                },
+                                child: _buildProvinceItem(province.name),
+                              ),
                             );
-                          } else if (snapshot.hasError) {
-                            return Text("Error: ${snapshot.error}");
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return const Text("No provinces available");
-                          } else {
-                            final provinces = snapshot.data!;
-                            return Column(
-                              children: provinces.map((province) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: InkWell(
-                                    onTap: () {
-                                      // Handle province selection
-                                      Navigator.pop(context, province);
-                                    },
-                                    child: _buildProvinceItem(province.name),
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          }
-                        },
+                          }).toList(),
+                        ),
                       ),
-                    )),
-              ),
+                    ),
+                  );
+                }
+              },
             ),
           ),
         ),
