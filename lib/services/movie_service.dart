@@ -1,11 +1,12 @@
 // movie_service.dart
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/movie.dart';
 import '../utils/unsafe_http_helper.dart';  // Update with the correct path
 
 class MovieService {
-  final String _baseUrl = "https://192.168.1.3:44375/movies";
+  final String _baseUrl = "${dotenv.env['API_URL']!}/movies";
 
   Future<List<Movie>> getMovies() async {
     try {

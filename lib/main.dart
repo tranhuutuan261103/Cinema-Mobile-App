@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import './routes/app_routes.dart';
 import './screens/booking_screen.dart';
 import './screens/province_selection_screen.dart';
 import './providers/province_provider.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: ".env");
   runApp(ChangeNotifierProvider(
       create: (context) => ProvinceProvider(), child: const MyApp()));
 }
