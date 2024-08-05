@@ -1,11 +1,12 @@
 // province_service.dart
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/province.dart';
 import '../utils/unsafe_http_helper.dart';  // Update with the correct path
 
 class ProvinceService {
-  final String _baseUrl = "https://192.168.1.3:44375/provinces";
+  final String _baseUrl = "${dotenv.env['API_URL']!}/provinces";
 
   Future<List<Province>> getProvinces() async {
     try {
