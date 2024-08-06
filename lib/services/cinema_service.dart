@@ -8,11 +8,11 @@ import '../utils/unsafe_http_helper.dart';  // Update with the correct path
 class CinemaService {
   final String _baseUrl = "${dotenv.env['API_URL']!}/cinemas";
 
-  Future<List<Cinema>> getCinemas() async {
+  Future<List<Cinema>> getCinemas({int? provinceId = 1}) async {
     try {
       final ioClient = getUnsafeIOClient();
 
-      final response = await ioClient.get(Uri.parse("$_baseUrl?provinceId=2"), 
+      final response = await ioClient.get(Uri.parse("$_baseUrl?provinceId=$provinceId"), 
         headers: {
           "Accept": "application/json",
         }

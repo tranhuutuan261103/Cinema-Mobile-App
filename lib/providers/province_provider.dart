@@ -8,6 +8,7 @@ class ProvinceProvider extends ChangeNotifier {
 
   Province? _selectedProvince;
   Province? get selectedProvince => _selectedProvince;
+  int? get selectedProvinceId => _selectedProvince?.id;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
