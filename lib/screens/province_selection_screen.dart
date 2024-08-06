@@ -81,7 +81,10 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
                     child: Container(
                       color: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
                         child: Column(
                           children: provinces.map((province) {
                             return Padding(
@@ -111,7 +114,7 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
 
   Widget _buildProvinceItem(String city) {
     return SizedBox(
-      height: 40,
+      height: 30,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -119,7 +122,7 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
             Icons.location_city,
             color: Colors.black,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 16),
           Text(
             city,
             style: const TextStyle(
