@@ -6,11 +6,19 @@ import './routes/app_routes.dart';
 import './screens/booking_screen.dart';
 import './screens/province_selection_screen.dart';
 import './providers/province_provider.dart';
+import './providers/auth_provider.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
-  runApp(ChangeNotifierProvider(
-      create: (context) => ProvinceProvider(), child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ProvinceProvider()),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
