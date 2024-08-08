@@ -4,9 +4,7 @@ import '../constants/colors.dart';
 import '../providers/province_provider.dart';
 
 class ProvinceSelectionScreen extends StatefulWidget {
-  final String title;
-
-  const ProvinceSelectionScreen({super.key, required this.title});
+  const ProvinceSelectionScreen({super.key});
 
   @override
   _ProvinceSelectionScreenState createState() =>
@@ -17,7 +15,6 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch provinces when the widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ProvinceProvider>(context, listen: false).getProvinces();
     });
@@ -70,10 +67,8 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
             child: Consumer<ProvinceProvider>(
               builder: (context, provinceProvider, child) {
                 if (provinceProvider.isLoading) {
-                  return const SizedBox(
-                    width: double.infinity,
-                    child: LinearProgressIndicator(),
-                  );
+                  return const Expanded(
+                      child: Center(child: CircularProgressIndicator()));
                 } else {
                   final provinces = provinceProvider.provinces;
                   return SingleChildScrollView(
@@ -92,7 +87,6 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: InkWell(
                                 onTap: () {
-                                  provinceProvider.setSelectedProvince(province);
                                   Navigator.pop(context, province);
                                 },
                                 child: _buildProvinceItem(province.name),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
+import '../screens/province_selection_screen.dart';
+import '../widgets/not_found_container.dart';
 import '../providers/province_provider.dart';
 import '../models/cinema.dart';
 import '../services/cinema_service.dart';
@@ -25,26 +27,46 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _loadCinemas();
-  }
-
-  void _loadCinemas() {
-    final provinceId = Provider.of<ProvinceProvider>(context, listen: false).selectedProvinceId;
-    if (provinceId != null) {
-      _cinemasFuture = CinemaService().getCinemas(provinceId: provinceId);
-    } else {
-      _cinemasFuture = CinemaService().getCinemas();
-    }
+    _fetchCinemas();
   }
 
   @override
   void initState() {
     super.initState();
-    final provinceId = Provider.of<ProvinceProvider>(context, listen: false).selectedProvinceId;
+    _fetchCinemas();
+  }
+
+  void _fetchCinemas() {
+    final provinceId = Provider.of<ProvinceProvider>(context, listen: false)
+        .selectedProvinceId;
     if (provinceId != null) {
-      _cinemasFuture = CinemaService().getCinemas(provinceId: provinceId);
+      setState(() {
+        _cinemasFuture = CinemaService().getCinemas(provinceId: provinceId);
+      });
     } else {
-      _cinemasFuture = CinemaService().getCinemas();
+      setState(() {
+        _cinemasFuture = CinemaService().getCinemas();
+      });
+    }
+  }
+
+  void _showProvinceSelectionScreen(BuildContext context) async {
+    final selectedProvince = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return const FractionallySizedBox(
+          heightFactor: 0.8,
+          child: ProvinceSelectionScreen(),
+        );
+      },
+    );
+
+    if (selectedProvince != null) {
+      Provider.of<ProvinceProvider>(context, listen: false)
+          .setSelectedProvince(selectedProvince);
+      _fetchCinemas();
     }
   }
 
@@ -62,7 +84,7 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                 )),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/city');
+                _showProvinceSelectionScreen(context);
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white, // Text color
@@ -78,7 +100,7 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                   Consumer<ProvinceProvider>(
                       builder: (context, ProvinceProvider provider, child) {
                     return Text(
-                        provider.selectedProvince?.name ?? "Chọn tỉnh thành");
+                        provider.selectedProvince?.name ?? "Tỉnh/thành");
                   }), // Text
                   const SizedBox(width: 8), // Space between text and icon
                   const Icon(Icons.location_city, color: Colors.white), // Icon
@@ -95,14 +117,21 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
               future: _cinemasFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(
-                    width: double.infinity,
-                    child: LinearProgressIndicator(),
-                  );
+                  return const Expanded(
+                      child: Center(child: CircularProgressIndicator()));
                 } else if (snapshot.hasData) {
                   if (snapshot.data!.isEmpty) {
                     // Nếu không có dữ liệu cinema thì không hiển thị gì cả
-                    return const SizedBox.shrink();
+                    return const Padding(
+                      padding:
+                          EdgeInsets.only(top: 64.0, left: 16.0, right: 16.0),
+                      child: NotFoundContainer(
+                        message:
+                            "Úi, hình như tụi mình chưa kết nối với rạp này.",
+                        subMessage: "Bạn hãy thử tìm rạp khác nhé!",
+                        icon: Icons.location_city,
+                      ),
+                    );
                   }
 
                   final cinemas = snapshot.data!;
@@ -139,28 +168,37 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                   return const SizedBox.shrink();
                 }
               }),
-          const Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Text(
-              "Danh sách phòng chiếu",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          FutureBuilder(
+              future: _cinemasFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return const Padding(
+                    padding: EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      "Danh sách phòng chiếu",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              }),
           FutureBuilder(
               future: _cinemasFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox(
-                    width: double.infinity,
-                    child: LinearProgressIndicator(),
-                  );
+                  return const SizedBox.shrink();
                 } else if (snapshot.hasData) {
                   final cinemas = snapshot.data!;
                   if (cinemas.isEmpty) {
-                    return const Text('Không có dữ liệu cinema.');
+                    return const SizedBox.shrink();
                   }
                   final auditoriums = _selectedCinema != null
                       ? _selectedCinema!.auditoriums
