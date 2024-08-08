@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const AppRoutes(),
         '/booking': (context) => BookingScreen(),
         '/city': (context) =>
-            const ProvinceSelectionScreen(title: "Chọn tỉnh thành"),
+            const ProvinceSelectionScreen(),
       },
     );
   }
