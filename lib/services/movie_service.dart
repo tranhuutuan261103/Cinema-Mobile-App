@@ -1,5 +1,6 @@
 // movie_service.dart
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/movie.dart';
@@ -21,10 +22,16 @@ class MovieService {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Movie.fromJson(json)).toList();
       } else {
-        throw Exception("Failed to load movies");
+        if (kDebugMode) {
+          print("Failed to load movies: ${response.statusCode}");
+        }
+        return [];
       }
     } catch (e) {
-      throw Exception(e);
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
     }
   }
 }

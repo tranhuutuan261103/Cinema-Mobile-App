@@ -1,5 +1,6 @@
 // cinema_service.dart
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/cinema.dart';
@@ -21,10 +22,16 @@ class CinemaService {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Cinema.fromJson(json)).toList();
       } else {
-        throw Exception("Failed to load cinemas");
+        if (kDebugMode) {
+          print("Failed to load cinemas: ${response.statusCode}");
+        }
+        return [];
       }
     } catch (e) {
-      throw Exception(e);
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
     }
   }
 }
