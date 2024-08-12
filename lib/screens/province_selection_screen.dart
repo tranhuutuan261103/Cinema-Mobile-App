@@ -7,8 +7,7 @@ class ProvinceSelectionScreen extends StatefulWidget {
   const ProvinceSelectionScreen({super.key});
 
   @override
-  _ProvinceSelectionScreenState createState() =>
-      _ProvinceSelectionScreenState();
+  State<ProvinceSelectionScreen> createState() => _ProvinceSelectionScreenState();
 }
 
 class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {

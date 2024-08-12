@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import "../screens/home.dart";
+import '../screens/product_selection_screen.dart';
 import "../screens/profile_screen.dart";
 import '../screens/auditorium_selection_screen.dart';
 import '../constants/colors.dart';
@@ -17,7 +18,7 @@ class _AppRoutesState extends State<AppRoutes> {
   final List<Widget> screens = [
     const HomePage(title: "Home"),
     const AuditoriumSelectionScreen(title: "Chọn rạp chiếu"),
-    const Placeholder(),
+    const ProductSelectionScreen(),
     const ProfileScreen(),
   ];
 
