@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 import '../models/product_combo.dart';
 import '../services/product_combo_service.dart';
+import '../components/date_selection_bottom_sheet.dart';
 import '../widgets/show_bottom_sheet_button.dart';
 
 class ProductSelectionScreen extends StatefulWidget {
@@ -14,11 +15,61 @@ class ProductSelectionScreen extends StatefulWidget {
 
 class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   late Future<List<ProductCombo>> _productCombosFuture;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
     _productCombosFuture = ProductComboService().getProductCombos();
+  }
+
+  void _selectDate() async {
+    await showModalBottomSheet<DateTime>(
+      context: context,
+      builder: (context) {
+        return DateSelectionBottomSheet(
+          selectedDate: _selectedDate,
+          onDateSelected: (date) {
+            setState(() {
+              _selectedDate = date;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    String weekDay = '';
+    switch (date.weekday) {
+      case 1:
+        weekDay = 'Thứ 2';
+        break;
+      case 2:
+        weekDay = 'Thứ 3';
+        break;
+      case 3:
+        weekDay = 'Thứ 4';
+        break;
+      case 4:
+        weekDay = 'Thứ 5';
+        break;
+      case 5:
+        weekDay = 'Thứ 6';
+        break;
+      case 6:
+        weekDay = 'Thứ 7';
+        break;
+      case 7:
+        weekDay = 'Chủ nhật';
+        break;
+    }
+
+    if (date.day == DateTime.now().day) {
+      weekDay = 'Hôm nay';
+    }
+
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}  $weekDay';
   }
 
   @override
@@ -42,9 +93,19 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
                     child: Column(
                       children: [
-                        ShowBottomSheetButton(title: "Nhận tại", value: "CGV Vimcom Đà Nẵng", icon: Icons.arrow_forward_ios, onPressed: () {}),
+                        ShowBottomSheetButton(
+                          title: "Nhận tại",
+                          value: "CGV Vimcom Đà Nẵng",
+                          icon: Icons.arrow_forward_ios,
+                          onPressed: () {},
+                        ),
                         const SizedBox(height: 16.0),
-                        ShowBottomSheetButton(title: "Ngày nhận bắp nước", value: DateTime.now(), icon: Icons.calendar_month_outlined, onPressed: () {}),
+                        ShowBottomSheetButton(
+                          title: "Ngày nhận bắp nước",
+                          value: _formatDate(_selectedDate),
+                          icon: Icons.calendar_month_outlined,
+                          onPressed: _selectDate,
+                        ),
                       ],
                     ),
                   ),
@@ -111,8 +172,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
               aspectRatio: 1,
               child: Image.network(
                 image,
-                fit: BoxFit
-                    .cover, // Make sure the image fits inside the container
+                fit: BoxFit.cover,
               ),
             ),
             Padding(
