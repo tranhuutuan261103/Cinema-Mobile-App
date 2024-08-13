@@ -1,3 +1,4 @@
+import 'package:cinema_mobile_app/widgets/screening_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/colors.dart';
@@ -20,7 +21,7 @@ class _BookingScreenState extends State<BookingScreen> {
   DateTime _selectedDate = DateTime.now();
 
   late Future<List<Cinema>> _cinemasFuture;
-  Cinema? _selectedCinema; // Biến lưu cinema đã chọn
+  Cinema? _selectedCinema;
 
   @override
   void initState() {
@@ -71,7 +72,6 @@ class _BookingScreenState extends State<BookingScreen> {
                     itemCount: _days.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        // blur when tapped
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           setState(() {
@@ -151,198 +151,197 @@ class _BookingScreenState extends State<BookingScreen> {
               ],
             ),
           ),
-          FutureBuilder(
-              future: _cinemasFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Expanded(
-                      child: Center(child: CircularProgressIndicator()));
-                } else if (snapshot.hasData) {
-                  if (snapshot.data!.isEmpty) {
-                    // Nếu không có dữ liệu cinema thì không hiển thị gì cả
-                    return const Padding(
-                      padding:
-                          EdgeInsets.only(top: 64.0, left: 16.0, right: 16.0),
-                      child: NotFoundContainer(
-                        message:
-                            "Úi, hình như tụi mình chưa kết nối với rạp này.",
-                        subMessage: "Bạn hãy thử tìm rạp khác nhé!",
-                        icon: Icons.location_city,
-                      ),
-                    );
-                  }
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  FutureBuilder<List<Cinema>>(
+                    future: _cinemasFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.only(
+                                top: 64.0, left: 16.0, right: 16.0),
+                            child: NotFoundContainer(
+                              message:
+                                  "Úi, hình như tụi mình chưa kết nối với rạp này.",
+                              subMessage: "Bạn hãy thử tìm rạp khác nhé!",
+                              icon: Icons.location_city,
+                            ),
+                          );
+                        }
 
-                  final cinemas = snapshot.data!;
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                          color: Colors.white,
+                        final cinemas = snapshot.data!;
+                        return SizedBox(
+                          width: double.infinity,
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                  children: cinemas.map((cinema) {
-                                return CinemaButton(
-                                  cinema: cinema,
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedCinema = cinema;
-                                    });
-                                  },
+                            padding: const EdgeInsets.all(16.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                color: Colors.white,
+                                padding: const EdgeInsets.all(8.0),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                      children: cinemas.map((cinema) {
+                                    return CinemaButton(
+                                      cinema: cinema,
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedCinema = cinema;
+                                        });
+                                      },
+                                    );
+                                  }).toList()),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        _selectedCinema != null
+                            ? Text(
+                                '${_selectedCinema!.name} (${_selectedCinema!.auditoriums.length})',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ))
+                            : const SizedBox.shrink(),
+                      ],
+                    ),
+                  ),
+                  FutureBuilder<List<Cinema>>(
+                    future: _cinemasFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox.shrink();
+                      } else if (snapshot.hasData) {
+                        final cinemas = snapshot.data!;
+                        if (cinemas.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        final auditoriums = _selectedCinema != null
+                            ? _selectedCinema!.auditoriums
+                            : cinemas[0].auditoriums;
+
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              color: Colors.white,
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                  children: auditoriums.map((auditorium) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Image.network(
+                                          _selectedCinema?.logoUrl ??
+                                              cinemas[0].logoUrl,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    auditorium.name,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "${auditorium.latitude} ${auditorium.longitude}",
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Icon(Icons
+                                                  .arrow_forward_ios_rounded),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      auditorium.address,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    GridView.builder(
+                                      shrinkWrap:
+                                          true, // Ensures the GridView only takes up necessary space
+                                      physics:
+                                          const NeverScrollableScrollPhysics(), // Disable scrolling for this GridView
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount:
+                                            3, // Adjust this number based on your design
+                                        crossAxisSpacing:
+                                            8.0, // Spacing between columns
+                                        mainAxisSpacing:
+                                            8.0, // Spacing between rows
+                                        childAspectRatio:
+                                            1.5, // Adjust the ratio to match your button design
+                                      ),
+                                      itemCount: auditorium.screenings.length,
+                                      itemBuilder: (context, index) {
+                                        final screening =
+                                            auditorium.screenings[index];
+                                        return ScreeningButton(
+                                          screening: screening,
+                                          onPressed: () {},
+                                        );
+                                      },
+                                    ),
+                                    if (auditorium != auditoriums.last)
+                                      const Divider(),
+                                  ],
                                 );
                               }).toList()),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              }),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                _selectedCinema != null
-                    ? Text(
-                        '${_selectedCinema!.name} (${_selectedCinema!.auditoriums.length})',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ))
-                    : const SizedBox.shrink(),
-              ],
+                        );
+                      } else {
+                        return const Text('Không có dữ liệu auditorium.');
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-          FutureBuilder(
-              future: _cinemasFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox.shrink();
-                } else if (snapshot.hasData) {
-                  final cinemas = snapshot.data!;
-                  if (cinemas.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-                  final auditoriums = _selectedCinema != null
-                      ? _selectedCinema!.auditoriums
-                      : cinemas[0].auditoriums;
-
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                                children: auditoriums.map((auditorium) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.network(
-                                        _selectedCinema?.logoUrl ??
-                                            cinemas[0].logoUrl,
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  auditorium.name,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "${auditorium.latitude} ${auditorium.longitude}",
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Icon(Icons
-                                                .arrow_forward_ios_rounded),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    auditorium.address,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Column(
-                                    children:
-                                        auditorium.screenings.map((screening) {
-                                      return Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                screening.startTime.toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                screening.id.toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                        ],
-                                      );
-                                    }).toList(),
-                                  ),
-                                  if (auditorium != auditoriums.last)
-                                    const Divider(),
-                                ],
-                              );
-                            }).toList()),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                } else {
-                  return const Text('Không có dữ liệu auditorium.');
-                }
-              }),
         ],
       ),
     );
