@@ -66,8 +66,7 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
             child: Consumer<ProvinceProvider>(
               builder: (context, provinceProvider, child) {
                 if (provinceProvider.isLoading) {
-                  return const Expanded(
-                      child: Center(child: CircularProgressIndicator()));
+                  return const Center(child: CircularProgressIndicator());
                 } else {
                   final provinces = provinceProvider.provinces;
                   return SingleChildScrollView(

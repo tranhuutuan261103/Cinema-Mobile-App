@@ -76,6 +76,15 @@ class _BookingScreenState extends State<BookingScreen> {
                         onTap: () {
                           setState(() {
                             _selectedDate = _days[index];
+                            _cinemasFuture = ScreeningService().getScreenings(
+                                provinceId: 1, startDate: _selectedDate);
+                            _cinemasFuture.then((cinemas) {
+                              if (cinemas.isNotEmpty) {
+                                setState(() {
+                                  _selectedCinema = cinemas[0];
+                                });
+                              }
+                            });
                           });
                         },
                         child: Container(
@@ -190,6 +199,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                       children: cinemas.map((cinema) {
                                     return CinemaButton(
                                       cinema: cinema,
+                                      isSelected: _selectedCinema == cinema,
                                       onPressed: () {
                                         setState(() {
                                           _selectedCinema = cinema;
@@ -207,21 +217,37 @@ class _BookingScreenState extends State<BookingScreen> {
                       }
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      children: [
-                        _selectedCinema != null
-                            ? Text(
-                                '${_selectedCinema!.name} (${_selectedCinema!.auditoriums.length})',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ))
-                            : const SizedBox.shrink(),
-                      ],
-                    ),
-                  ),
+                  FutureBuilder<List<Cinema>>(
+                      future: _cinemasFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox.shrink();
+                        }
+
+                        if (snapshot.hasData) {
+                          final cinemas = snapshot.data!;
+                          if (cinemas.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                        }
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            children: [
+                              _selectedCinema != null
+                                  ? Text(
+                                      '${_selectedCinema!.name} (${_selectedCinema!.auditoriums.length})',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ))
+                                  : const SizedBox.shrink(),
+                            ],
+                          ),
+                        );
+                      }),
                   FutureBuilder<List<Cinema>>(
                     future: _cinemasFuture,
                     builder: (context, snapshot) {

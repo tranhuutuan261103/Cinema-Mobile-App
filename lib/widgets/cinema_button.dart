@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
 import '../models/cinema.dart';
 
 class CinemaButton extends StatelessWidget {
   final Cinema cinema;
+  final bool isSelected;
   final Function onPressed;
 
   const CinemaButton(
-      {super.key, required this.cinema, required this.onPressed});
+      {super.key, required this.cinema, this.isSelected = false, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class CinemaButton extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.grey, // Border color
+                  color: isSelected ? colorPrimary :Colors.grey, // Border color
                   width: 2.0, // Border width
                 ),
                 borderRadius: BorderRadius.circular(
@@ -44,6 +46,9 @@ class CinemaButton extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               cinema.name,
+              style: TextStyle(
+                color: isSelected ? colorPrimary : Colors.black,
+              ),
             ),
           ],
         ),
