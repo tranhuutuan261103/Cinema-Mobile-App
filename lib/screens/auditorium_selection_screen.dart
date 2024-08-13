@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
 import '../screens/province_selection_screen.dart';
+import '../widgets/cinema_button.dart';
 import '../widgets/not_found_container.dart';
 import '../providers/province_provider.dart';
 import '../models/cinema.dart';
@@ -149,13 +150,13 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                   children: cinemas.map((cinema) {
-                                return GestureDetector(
-                                  onTap: () {
+                                return CinemaButton(
+                                  cinema: cinema,
+                                  onPressed: () {
                                     setState(() {
                                       _selectedCinema = cinema;
                                     });
                                   },
-                                  child: _buildCinemaItem(cinema),
                                 );
                               }).toList()),
                             ),
@@ -282,42 +283,6 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                   return const Text('Không có dữ liệu auditorium.');
                 }
               }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCinemaItem(Cinema cinema) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey, // Border color
-                width: 2.0, // Border width
-              ),
-              borderRadius: BorderRadius.circular(
-                  8.0), // Optional: Add a border radius if you want rounded corners
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  8.0), // Optional: Apply the same radius if you use a border radius
-              child: Image.network(
-                cinema.logoUrl,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            cinema.name,
-          ),
         ],
       ),
     );
