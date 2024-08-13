@@ -1,4 +1,4 @@
-import '../models/auditorium.dart';
+import './auditorium.dart';
 
 class Cinema {
   final int id;
