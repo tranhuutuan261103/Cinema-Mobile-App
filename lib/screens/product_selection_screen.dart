@@ -5,6 +5,7 @@ import '../models/product_combo.dart';
 import '../services/product_combo_service.dart';
 import '../components/date_selection_bottom_sheet.dart';
 import '../widgets/show_bottom_sheet_button.dart';
+import '../utils/datetime_helper.dart';
 
 class ProductSelectionScreen extends StatefulWidget {
   const ProductSelectionScreen({super.key});
@@ -39,39 +40,6 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
     );
   }
 
-  String _formatDate(DateTime date) {
-    String weekDay = '';
-    switch (date.weekday) {
-      case 1:
-        weekDay = 'Thứ 2';
-        break;
-      case 2:
-        weekDay = 'Thứ 3';
-        break;
-      case 3:
-        weekDay = 'Thứ 4';
-        break;
-      case 4:
-        weekDay = 'Thứ 5';
-        break;
-      case 5:
-        weekDay = 'Thứ 6';
-        break;
-      case 6:
-        weekDay = 'Thứ 7';
-        break;
-      case 7:
-        weekDay = 'Chủ nhật';
-        break;
-    }
-
-    if (date.day == DateTime.now().day) {
-      weekDay = 'Hôm nay';
-    }
-
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}  $weekDay';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +70,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                         const SizedBox(height: 16.0),
                         ShowBottomSheetButton(
                           title: "Ngày nhận bắp nước",
-                          value: _formatDate(_selectedDate),
+                          value: DatetimeHelper.getFormattedDate(_selectedDate),
                           icon: Icons.calendar_month_outlined,
                           onPressed: _selectDate,
                         ),

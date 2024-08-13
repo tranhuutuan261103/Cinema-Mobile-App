@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
+import '../utils/datetime_helper.dart';
 
 class DateSelectionBottomSheet extends StatefulWidget {
   final DateTime selectedDate;
@@ -27,7 +28,7 @@ class _DateSelectionBottomSheetState extends State<DateSelectionBottomSheet> {
     _selectedDate = widget.selectedDate;
     _days = List.generate(7, (index) {
       final date = DateTime.now().add(Duration(days: index));
-      return _formatDate(date);
+      return DatetimeHelper.getFormattedDate(date);
     });
   }
 
@@ -37,39 +38,6 @@ class _DateSelectionBottomSheetState extends State<DateSelectionBottomSheet> {
     });
     widget.onDateSelected(_selectedDate);
     Navigator.pop(context);
-  }
-
-  String _formatDate(DateTime date) {
-    String weekDay = '';
-    switch (date.weekday) {
-      case 1:
-        weekDay = 'Thứ 2';
-        break;
-      case 2:
-        weekDay = 'Thứ 3';
-        break;
-      case 3:
-        weekDay = 'Thứ 4';
-        break;
-      case 4:
-        weekDay = 'Thứ 5';
-        break;
-      case 5:
-        weekDay = 'Thứ 6';
-        break;
-      case 6:
-        weekDay = 'Thứ 7';
-        break;
-      case 7:
-        weekDay = 'Chủ nhật';
-        break;
-    }
-
-    if (date.day == DateTime.now().day) {
-      weekDay = 'Hôm nay';
-    }
-
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}  $weekDay';
   }
 
   @override

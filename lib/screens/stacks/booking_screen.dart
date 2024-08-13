@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../../constants/colors.dart';
 import '../../models/cinema.dart';
 import '../../models/movie.dart';
+import '../../widgets/cinema_button.dart';
 import '../../widgets/not_found_container.dart';
 import '../../services/screening_service.dart';
+import '../../utils/datetime_helper.dart';
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -27,7 +29,22 @@ class _BookingScreenState extends State<BookingScreen> {
       final date = DateTime.now().add(Duration(days: index));
       return date;
     });
-    _cinemasFuture = ScreeningService().getScreenings(provinceId: 1);
+    _fetchCinemas();
+  }
+
+  void _fetchCinemas() {
+    setState(() {
+      _cinemasFuture = ScreeningService().getScreenings(provinceId: 1);
+      if (_selectedCinema == null) {
+        _cinemasFuture.then((cinemas) {
+          if (cinemas.isNotEmpty) {
+            setState(() {
+              _selectedCinema = cinemas[0];
+            });
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -81,7 +98,8 @@ class _BookingScreenState extends State<BookingScreen> {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 4),
                                 child: Text(
-                                  _weekDayFormat(_days[index].weekday),
+                                  DatetimeHelper.getFormattedWeekDay(
+                                      _days[index].weekday),
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: _days[index].day == _selectedDate.day
@@ -169,13 +187,13 @@ class _BookingScreenState extends State<BookingScreen> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                   children: cinemas.map((cinema) {
-                                return GestureDetector(
-                                  onTap: () {
+                                return CinemaButton(
+                                  cinema: cinema,
+                                  onPressed: () {
                                     setState(() {
                                       _selectedCinema = cinema;
                                     });
                                   },
-                                  child: _buildCinemaItem(cinema),
                                 );
                               }).toList()),
                             ),
@@ -283,7 +301,8 @@ class _BookingScreenState extends State<BookingScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Column(
-                                    children: auditorium.screenings.map((screening) {
+                                    children:
+                                        auditorium.screenings.map((screening) {
                                       return Column(
                                         children: [
                                           Row(
@@ -327,74 +346,5 @@ class _BookingScreenState extends State<BookingScreen> {
         ],
       ),
     );
-  }
-
-  Widget _buildCinemaItem(Cinema cinema) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey, // Border color
-                width: 2.0, // Border width
-              ),
-              borderRadius: BorderRadius.circular(
-                  8.0), // Optional: Add a border radius if you want rounded corners
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  8.0), // Optional: Apply the same radius if you use a border radius
-              child: Image.network(
-                cinema.logoUrl,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            cinema.name,
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _weekDayFormat(int day) {
-    String weekDay = '';
-    switch (day) {
-      case 1:
-        weekDay = 'Thứ 2';
-        break;
-      case 2:
-        weekDay = 'Thứ 3';
-        break;
-      case 3:
-        weekDay = 'Thứ 4';
-        break;
-      case 4:
-        weekDay = 'Thứ 5';
-        break;
-      case 5:
-        weekDay = 'Thứ 6';
-        break;
-      case 6:
-        weekDay = 'Thứ 7';
-        break;
-      case 7:
-        weekDay = 'C.Nhật';
-        break;
-    }
-
-    if (day == DateTime.now().weekday) {
-      weekDay = 'H.nay';
-    }
-
-    return weekDay;
   }
 }
