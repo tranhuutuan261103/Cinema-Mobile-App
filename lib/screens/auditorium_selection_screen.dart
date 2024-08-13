@@ -43,10 +43,24 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
     if (provinceId != null) {
       setState(() {
         _cinemasFuture = CinemaService().getCinemas(provinceId: provinceId);
+        _cinemasFuture.then((cinemas) {
+          if (cinemas.isNotEmpty) {
+            setState(() {
+              _selectedCinema = cinemas[0];
+            });
+          }
+        });
       });
     } else {
       setState(() {
         _cinemasFuture = CinemaService().getCinemas();
+        _cinemasFuture.then((cinemas) {
+          if (cinemas.isNotEmpty) {
+            setState(() {
+              _selectedCinema = cinemas[0];
+            });
+          }
+        });
       });
     }
   }
@@ -152,6 +166,7 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                                   children: cinemas.map((cinema) {
                                 return CinemaButton(
                                   cinema: cinema,
+                                  isSelected: _selectedCinema == cinema,
                                   onPressed: () {
                                     setState(() {
                                       _selectedCinema = cinema;
