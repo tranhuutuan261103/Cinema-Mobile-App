@@ -1,5 +1,6 @@
 // screening_service.dart
 import 'dart:convert';
+import 'package:cinema_mobile_app/models/screening.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -35,5 +36,19 @@ class ScreeningService {
       }
       return [];
     }
+  }
+
+  Future<Screening> getScreening(int id) {
+    final ioClient = getUnsafeIOClient();
+
+    return ioClient.get(Uri.parse("$_baseUrl/$id"), headers: {
+      "Accept": "application/json",
+    }).then((response) {
+      if (response.statusCode == 200) {
+        return Screening.fromJson(json.decode(response.body));
+      } else {
+        throw Exception("Failed to load screening");
+      }
+    });
   }
 }
