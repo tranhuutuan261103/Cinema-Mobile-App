@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cinema_mobile_app/models/account.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../constants/colors.dart';
 import '../providers/auth_provider.dart';
@@ -17,6 +20,17 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late Future<Account>? _accountFuture;
 
+  Future<void> _pickImage() async {
+    final image = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (image == null) {
+      return;
+    }
+    File selectedImage = File(image.path);
+    _updateAvatar(selectedImage);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,6 +44,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _accountFuture = AccountService().getProfile(token);
       });
     }
+  }
+
+  void _updateAvatar(File fileData) {
+    final token = Provider.of<AuthProvider>(context, listen: false).getToken;
+    AccountService().updateAvatar(token, fileData).then((account) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Avatar updated successfully'),
+        ),
+      );
+      setState(() {
+        _accountFuture = Future.value(account);
+      });
+    }).catchError(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -51,25 +87,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: isAuthenticated
           ? _buildProfileContent(context)
           : Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const NotFoundContainer(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const NotFoundContainer(
                     message: "Vui lòng đăng nhập để xem trang cá nhân",
                     subMessage: "Đăng nhập để xem thông tin cá nhân của bạn",
                     icon: Icons.person,
                   ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    _showLoginDialog(context);
-                  },
-                  child: const Text('Đăng nhập'),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      _showLoginDialog(context);
+                    },
+                    child: const Text('Đăng nhập'),
+                  ),
+                ],
+              ),
             ),
-          ),
     );
   }
 
@@ -158,18 +194,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Positioned(
               top: -64, // Position the image above the container
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(40),
-                  child: Image.network(
-                    "https://assetsio.gnwcdn.com/Genshin-Impact-Furina-best-build%2C-Talent-and-Ascension-materials%2C-weapon%2C-and-team-cover.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
-                    width: 80,
-                    height: 80,
+              width: 80,
+              height: 80,
+              left: MediaQuery.of(context).size.width / 2 - 40,
+              child: Stack(children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: FutureBuilder<Account>(
+                    future: _accountFuture,
+                    builder: (context, snapshot) {
+                      return snapshot.hasData
+                          ? Center(
+                              child: GestureDetector(
+                                onTap: _pickImage,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(40),
+                                  child: Image.network(
+                                    snapshot.data!.avatarUrl ?? "https://assetsio.gnwcdn.com/Genshin-Impact-Furina-best-build%2C-Talent-and-Ascension-materials%2C-weapon%2C-and-team-cover.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
+                                    width: 80,
+                                    height: 80,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : const SizedBox();
+                    },
                   ),
                 ),
-              ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  width: 30,
+                  height: 30,
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.orange[100],
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 1,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        color: Colors.orange,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
             ),
             Positioned(
               top: 22,

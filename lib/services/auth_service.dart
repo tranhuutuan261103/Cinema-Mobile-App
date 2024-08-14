@@ -20,7 +20,7 @@ class AuthService{
           "username": username,
           "password": password,
           "rememberMe": true,
-          "roleRequest": "User",
+          "roleRequest": "Customer",
         }),
       );
       if (response.statusCode == 200) {
