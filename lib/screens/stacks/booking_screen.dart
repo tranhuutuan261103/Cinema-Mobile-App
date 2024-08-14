@@ -7,6 +7,7 @@ import '../../models/cinema.dart';
 import '../../models/movie.dart';
 import '../../widgets/cinema_button.dart';
 import '../../widgets/not_found_container.dart';
+import './seat_selection_screen.dart';
 import '../../screens/province_selection_screen.dart';
 import '../../providers/province_provider.dart';
 import '../../services/screening_service.dart';
@@ -66,6 +67,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: colorPrimary,
         title: Text(movie.title),
       ),
       body: Column(
@@ -367,7 +369,17 @@ class _BookingScreenState extends State<BookingScreen> {
                                               auditorium.screenings[index];
                                           return ScreeningButton(
                                             screening: screening,
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SeatSelectionScreen(
+                                                          screeningId:
+                                                              screening.id),
+                                                ),
+                                              );
+                                            },
                                           );
                                         },
                                       ),

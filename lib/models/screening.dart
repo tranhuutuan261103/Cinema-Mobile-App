@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import './seat.dart';
+import './movie.dart';
+import './auditorium.dart';
 class Screening {
   final int id;
   final DateTime startDate;
@@ -7,6 +10,9 @@ class Screening {
   final TimeOfDay endTime;
   final int seatsAvailable;
   final int seatsTotal;
+  final List<Seat>? seats;
+  final Movie? movie;
+  final Auditorium? auditorium;
 
   Screening({
     required this.id,
@@ -15,6 +21,9 @@ class Screening {
     required this.endTime,
     this.seatsAvailable = 0,
     this.seatsTotal = 0,
+    this.seats,
+    this.movie,
+    this.auditorium,
   });
 
   factory Screening.fromJson(Map<String, dynamic> json) {
@@ -31,6 +40,13 @@ class Screening {
       ),
       seatsAvailable: (json['seatsAvailable'] as num).toInt(),
       seatsTotal: (json['seatsTotal'] as num).toInt(),
+      seats: json['seats'] != null
+          ? (json['seats'] as List).map((seat) => Seat.fromJson(seat)).toList()
+          : null,
+      movie: json['movie'] != null ? Movie.fromJson(json['movie']) : null,
+      auditorium: json['auditorium'] != null
+          ? Auditorium.fromJson(json['auditorium'])
+          : null,
     );
   }
 }
