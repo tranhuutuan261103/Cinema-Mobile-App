@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 import '../models/movie.dart';
 import '../widgets/movie_poster.dart';
+import '../widgets/not_found_container.dart';
 import '../services/movie_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -64,9 +65,15 @@ class _MyHomePageState extends State<HomePage> {
                       child: LinearProgressIndicator(),
                     );
                   } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
+                    return NotFoundContainer(
+                      message: "Please try again later.",
+                      subMessage: snapshot.error.toString(),
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text("No movies available");
+                    return const NotFoundContainer(
+                      message: "No movies found.",
+                      subMessage: "Please try again later.",
+                    );
                   } else {
                     final movies = snapshot.data!;
                     return SingleChildScrollView(
