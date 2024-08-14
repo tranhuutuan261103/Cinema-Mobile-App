@@ -1,11 +1,14 @@
 import 'package:cinema_mobile_app/widgets/screening_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/colors.dart';
 import '../../models/cinema.dart';
 import '../../models/movie.dart';
 import '../../widgets/cinema_button.dart';
 import '../../widgets/not_found_container.dart';
+import '../../screens/province_selection_screen.dart';
+import '../../providers/province_provider.dart';
 import '../../services/screening_service.dart';
 import '../../utils/datetime_helper.dart';
 
@@ -24,6 +27,12 @@ class _BookingScreenState extends State<BookingScreen> {
   Cinema? _selectedCinema;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchCinemas();
+  }
+
+  @override
   void initState() {
     super.initState();
     _days = List.generate(14, (index) {
@@ -34,8 +43,11 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   void _fetchCinemas() {
+    int provinceId = Provider.of<ProvinceProvider>(context, listen: false)
+        .selectedProvince
+        !.id;
     setState(() {
-      _cinemasFuture = ScreeningService().getScreenings(provinceId: 1);
+      _cinemasFuture = ScreeningService().getScreenings(provinceId: provinceId, startDate: _selectedDate);
       if (_selectedCinema == null) {
         _cinemasFuture.then((cinemas) {
           if (cinemas.isNotEmpty) {
@@ -75,9 +87,10 @@ class _BookingScreenState extends State<BookingScreen> {
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           setState(() {
+                            int provinceId = Provider.of<ProvinceProvider>(context, listen: false).selectedProvince!.id;
                             _selectedDate = _days[index];
                             _cinemasFuture = ScreeningService().getScreenings(
-                                provinceId: 1, startDate: _selectedDate);
+                                provinceId: provinceId, startDate: _selectedDate);
                             _cinemasFuture.then((cinemas) {
                               if (cinemas.isNotEmpty) {
                                 setState(() {
@@ -219,6 +232,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 '${selectedCinema.name} (${selectedCinema.auditoriums.length})',
@@ -227,6 +241,43 @@ class _BookingScreenState extends State<BookingScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              TextButton(
+                                onPressed: () {
+                                  _showProvinceSelectionScreen(context);
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: colorPrimary, // Text color
+                                  backgroundColor:
+                                      Colors.transparent, // Background color
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8), // Adjust padding as needed
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  side: const BorderSide(
+                                    color: colorPrimary,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize
+                                      .min, // Ensures the button size fits the content
+                                  children: [
+                                    // Space between text and icon
+                                    const Icon(Icons.center_focus_weak,
+                                        color: colorPrimary), // Icon
+                                    const SizedBox(width: 8),
+                                    Consumer<ProvinceProvider>(builder:
+                                        (context, ProvinceProvider provider,
+                                            child) {
+                                      return Text(
+                                          provider.selectedProvince?.name ??
+                                              "Tỉnh/thành");
+                                    }), // Text
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -341,5 +392,25 @@ class _BookingScreenState extends State<BookingScreen> {
         ],
       ),
     );
+  }
+
+  void _showProvinceSelectionScreen(BuildContext context) async {
+    final selectedProvince = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return const FractionallySizedBox(
+          heightFactor: 0.8,
+          child: ProvinceSelectionScreen(),
+        );
+      },
+    );
+
+    if (selectedProvince != null) {
+      Provider.of<ProvinceProvider>(context, listen: false)
+          .setSelectedProvince(selectedProvince);
+      _fetchCinemas();
+    }
   }
 }

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../constants/colors.dart';
 import '../providers/auth_provider.dart';
 import '../services/account_service.dart';
+import '../widgets/not_found_container.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late Future<Account>? _accountFuture;
 
-   @override
+  @override
   void initState() {
     super.initState();
     _fetchAccount();
@@ -49,9 +50,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: isAuthenticated
           ? _buildProfileContent(context)
-          : const Center(
-              child: CircularProgressIndicator(),
+          : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const NotFoundContainer(
+                    message: "Vui lòng đăng nhập để xem trang cá nhân",
+                    subMessage: "Đăng nhập để xem thông tin cá nhân của bạn",
+                    icon: Icons.person,
+                  ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    _showLoginDialog(context);
+                  },
+                  child: const Text('Đăng nhập'),
+                ),
+              ],
             ),
+          ),
     );
   }
 
@@ -89,7 +107,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               final username = usernameController.text;
               final password = passwordController.text;
-              Provider.of<AuthProvider>(context, listen: false).login(username, password);
+              Provider.of<AuthProvider>(context, listen: false)
+                  .login(username, password);
               Navigator.of(context).pop(); // Close the dialog
             },
             child: const Text('Login'),
@@ -158,17 +177,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               right: 0,
               child: Center(
                 child: FutureBuilder<Account>(
-                  future: _accountFuture,
-                  builder: (context, snapshot) {
-                    return Text(
-                      snapshot.hasData ? snapshot.data!.firstName : "",
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  }
-                ),
+                    future: _accountFuture,
+                    builder: (context, snapshot) {
+                      return Text(
+                        snapshot.hasData ? snapshot.data!.firstName : "",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }),
               ),
             ),
             Positioned(
