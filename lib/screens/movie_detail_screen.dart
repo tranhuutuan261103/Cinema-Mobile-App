@@ -2,12 +2,27 @@ import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
 import '../models/movie.dart';
+import '../models/comment.dart';
 import '../widgets/comment_container.dart';
+import '../services/comment_service.dart';
 
-class MovieDetailScreen extends StatelessWidget {
+class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
 
   const MovieDetailScreen({super.key, required this.movie});
+
+  @override
+  State<MovieDetailScreen> createState() => _MovieDetailScreenState();
+}
+
+class _MovieDetailScreenState extends State<MovieDetailScreen> {
+  late Future<List<Comment>> _commentsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentsFuture = CommentService().getComments(movieId: widget.movie.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +55,7 @@ class MovieDetailScreen extends StatelessWidget {
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(16)),
                               child: Image.network(
-                                movie.imageUrl,
+                                widget.movie.imageUrl,
                                 width: 100,
                                 height: 100 * 4 / 3, // Image height
                                 fit: BoxFit.cover,
@@ -60,7 +75,7 @@ class MovieDetailScreen extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
-                                      movie.title,
+                                      widget.movie.title,
                                       style: const TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
@@ -71,7 +86,7 @@ class MovieDetailScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      movie.categories
+                                      widget.movie.categories
                                           .map((category) => category.name)
                                           .join(", "),
                                       style: const TextStyle(fontSize: 14),
@@ -91,12 +106,12 @@ class MovieDetailScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             _buildDetailColumn('Ngày khởi chiếu',
-                                '${movie.releaseDate.day}/${movie.releaseDate.month}/${movie.releaseDate.year}'),
+                                '${widget.movie.releaseDate.day}/${widget.movie.releaseDate.month}/${widget.movie.releaseDate.year}'),
                             _buildSeperator(),
                             _buildDetailColumn(
-                                'Thời lượng', '${movie.duration} phút'),
+                                'Thời lượng', '${widget.movie.duration} phút'),
                             _buildSeperator(),
-                            _buildDetailColumn('Ngôn ngữ', movie.language),
+                            _buildDetailColumn('Ngôn ngữ', widget.movie.language),
                           ],
                         ),
                       ],
@@ -108,7 +123,7 @@ class MovieDetailScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: _buildDescription(movie.description),
+                    child: _buildDescription(widget.movie.description),
                   ),
                   Container(
                     height: 8.0,
@@ -230,12 +245,29 @@ class MovieDetailScreen extends StatelessWidget {
           border: Border.all(color: Colors.grey[300]!),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Column(
-          children: [
-            CommentContainer(hasSeparator: true),
-            CommentContainer(hasSeparator: true),
-            CommentContainer(),
-          ],
+        child: FutureBuilder<List<Comment>>(
+          future: _commentsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text('Failed to load comments'),
+                );
+              } else {
+                final comments = snapshot.data!;
+                
+                return Column(
+                  children: comments
+                      .map((comment) => CommentContainer(comment: comment))
+                      .toList(),
+                );
+              }
+            }
+          },
         ),
       ),
     ]);
@@ -247,7 +279,7 @@ class MovieDetailScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           // Navigate to the booking screen
-          Navigator.pushNamed(context, '/booking', arguments: movie);
+          Navigator.pushNamed(context, '/booking', arguments: widget.movie);
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
