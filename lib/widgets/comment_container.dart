@@ -3,10 +3,14 @@ import 'package:expandable_text/expandable_text.dart';
 
 import '../constants/colors.dart';
 import '../utils/datetime_helper.dart';
+import '../models/comment.dart';
 
 class CommentContainer extends StatelessWidget {
+  final Comment comment;
   final bool hasSeparator;
-  const CommentContainer({super.key, this.hasSeparator = false});
+
+  const CommentContainer(
+      {super.key, required this.comment, this.hasSeparator = false});
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +35,26 @@ class CommentContainer extends StatelessWidget {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 14,
                   backgroundImage:
-                      NetworkImage('https://i.pravatar.cc/150?img=1'),
+                    comment.author.avatarUrl != null
+                      ? NetworkImage(comment.author.avatarUrl!)
+                      : const NetworkImage('https://via.placeholder.com/150'),
                 ),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Nguyen Van A',
-                      style: TextStyle(
+                    Text(
+                      '${comment.author.firstName} ${comment.author.lastName}',
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                     Text(
-                      DatetimeHelper.getFormattedDate(DateTime.now()),
+                      DatetimeHelper.getFormattedDate(comment.createdAt),
                       style: const TextStyle(
                         fontSize: 10,
                         color: Colors.grey,
@@ -59,18 +65,18 @@ class CommentContainer extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            const Row(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.star,
                   color: colorPrimary,
                   size: 20,
                 ),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  '8/10 - Đáng xem',
-                  style: TextStyle(
+                  '${comment.rating.value}/10 - ${comment.rating}',
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -78,9 +84,9 @@ class CommentContainer extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            const ExpandableText(
-              'Ban tổ chức cuộc thi UniHack 2024 xin chân thành cảm ơn bạn vì đã dành thời gian tham gia sự kiện Demo Day - Chung kết cuộc thi UniHack 2024. Sự quan tâm và ủng hộ của bạn chính là động lực to lớn giúp chúng mình tổ chức thành công cuộc thi năm nay. Để bày tỏ sự trân trọng, chúng mình gửi tặng bạn Voucher ELSA Pro 3 tháng trị giá 50.000 đồng đến từ Nhà tài trợ Học bổng',
-              style: TextStyle(
+            ExpandableText(
+              comment.content,
+              style: const TextStyle(
                 fontSize: 14,
                 height: 1.2,
               ),
@@ -90,7 +96,7 @@ class CommentContainer extends StatelessWidget {
               expandText: 'xem thêm',
               collapseText: 'thu gọn',
               linkColor: colorPrimary,
-              linkStyle: TextStyle(
+              linkStyle: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
@@ -146,18 +152,18 @@ class CommentContainer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       color: Colors.white,
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.comment,
                           color: colorPrimary,
                           size: 16,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
-                          '43',
-                          style: TextStyle(
+                          comment.replies.length.toString(),
+                          style: const TextStyle(
                             fontSize: 14,
                             color: colorPrimary,
                           ),
