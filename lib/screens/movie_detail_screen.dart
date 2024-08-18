@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
 import '../models/movie.dart';
+import '../widgets/comment_container.dart';
 
 class MovieDetailScreen extends StatelessWidget {
   final Movie movie;
@@ -16,89 +17,108 @@ class MovieDetailScreen extends StatelessWidget {
         title: const Text(
           'Thông tin phim',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.normal,
-            color: Color.fromRGBO(255, 255, 255, 1)
-          ),
+              fontSize: 20,
+              fontWeight: FontWeight.normal,
+              color: Color.fromRGBO(255, 255, 255, 1)),
         ),
       ),
       body: Column(
         children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Movie Poster and Details
-                    Row(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Movie Poster and Details
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
                       children: [
-                        ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(16)),
-                          child: Image.network(
-                            movie.imageUrl,
-                            width: 100,
-                            height: 100 * 4 / 3, // Image height
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 16, // Spacing between the image and the text
-                        ),
-                        Expanded(
-                          child: SizedBox(
-                            height:
-                                100 * 4 / 3, // Match the height of the image
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  movie.title,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 2,
-                                  overflow:
-                                      TextOverflow.ellipsis, // Handle overflow
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  movie.categories
-                                      .map((category) => category.name)
-                                      .join(", "),
-                                  style: const TextStyle(fontSize: 14),
-                                  overflow:
-                                      TextOverflow.ellipsis, // Handle overflow
-                                  maxLines: 2,
-                                ),
-                              ],
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(16)),
+                              child: Image.network(
+                                movie.imageUrl,
+                                width: 100,
+                                height: 100 * 4 / 3, // Image height
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
+                            const SizedBox(
+                              width:
+                                  16, // Spacing between the image and the text
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                height: 100 *
+                                    4 /
+                                    3, // Match the height of the image
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      movie.title,
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow
+                                          .ellipsis, // Handle overflow
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      movie.categories
+                                          .map((category) => category.name)
+                                          .join(", "),
+                                      style: const TextStyle(fontSize: 14),
+                                      overflow: TextOverflow
+                                          .ellipsis, // Handle overflow
+                                      maxLines: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // Date, Duration, Language Information
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildDetailColumn('Ngày khởi chiếu',
+                                '${movie.releaseDate.day}/${movie.releaseDate.month}/${movie.releaseDate.year}'),
+                            _buildSeperator(),
+                            _buildDetailColumn(
+                                'Thời lượng', '${movie.duration} phút'),
+                            _buildSeperator(),
+                            _buildDetailColumn('Ngôn ngữ', movie.language),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    // Date, Duration, Language Information
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildDetailColumn('Ngày khởi chiếu',
-                            '${movie.releaseDate.day}/${movie.releaseDate.month}/${movie.releaseDate.year}'),
-                        _buildSeperator(),
-                        _buildDetailColumn(
-                            'Thời lượng', '${movie.duration} phút'),
-                        _buildSeperator(),
-                        _buildDetailColumn('Ngôn ngữ', movie.language),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDescription(movie.description),
-                  ],
-                ),
+                  ),
+                  Container(
+                    height: 8.0,
+                    color: Colors.white,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _buildDescription(movie.description),
+                  ),
+                  Container(
+                    height: 8.0,
+                    color: Colors.white,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _buildCommentSection(),
+                  ),
+                ],
               ),
             ),
           ),
@@ -163,6 +183,62 @@ class MovieDetailScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildCommentSection() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Text(
+        'Cộng đồng Tune Cinema nghĩ gì?',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      Row(
+        children: [
+          const Icon(
+            Icons.star,
+            color: colorPrimary,
+          ),
+          const SizedBox(width: 4),
+          const Text(
+            '9.5/10',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Text(
+            ' (1000 đánh giá)',
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          const Spacer(),
+          TextButton(
+              onPressed: () {
+                print("View all comments");
+              },
+              style: ButtonStyle(
+                  overlayColor: WidgetStateProperty.all(Colors.transparent)),
+              child: const Text('Viết đánh giá')),
+        ],
+      ),
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Column(
+          children: [
+            CommentContainer(hasSeparator: true),
+            CommentContainer(hasSeparator: true),
+            CommentContainer(),
+          ],
+        ),
+      ),
+    ]);
   }
 
   Widget _buildBookTicketButton(BuildContext context) {
