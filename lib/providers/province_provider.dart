@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../services/province_service.dart';
 import '../models/province.dart';
 
@@ -13,7 +15,22 @@ class ProvinceProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<void> getProvinces() async {
+  ProvinceProvider () {
+    _getProvinces().then(
+      (_) => _loadProvince(
+    ));
+  }
+
+  Future<void> _loadProvince() async {
+    final prefs = await SharedPreferences.getInstance();
+    final provinceId = prefs.getInt('provinceId');
+    if (provinceId != null) {
+      _selectedProvince = _provinces.firstWhere((province) => province.id == provinceId);
+    }
+    notifyListeners();
+  }
+
+  Future<void> _getProvinces() async {
     _isLoading = true;
     notifyListeners();
 
@@ -25,8 +42,10 @@ class ProvinceProvider extends ChangeNotifier {
     }
   }
 
-  void setSelectedProvince(Province province) {
+  Future<void> setSelectedProvince(Province province) async {
     _selectedProvince = province;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('provinceId', province.id);
     notifyListeners();
   }
 }
