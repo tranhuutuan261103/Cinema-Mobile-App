@@ -8,7 +8,7 @@ import './screens/province_selection_screen.dart';
 import './providers/province_provider.dart';
 import './providers/auth_provider.dart';
 
-Future main() async {
+Future<void> main() async {
   await dotenv.load(fileName: ".env");
   runApp(
     MultiProvider(
@@ -39,8 +39,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const AppRoutes(),
         '/booking': (context) => const BookingScreen(),
-        '/city': (context) =>
-            const ProvinceSelectionScreen(),
+        '/city': (context) => const ProvinceSelectionScreen(),
       },
     );
   }

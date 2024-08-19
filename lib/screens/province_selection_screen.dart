@@ -14,9 +14,6 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProvinceProvider>(context, listen: false).getProvinces();
-    });
   }
 
   @override

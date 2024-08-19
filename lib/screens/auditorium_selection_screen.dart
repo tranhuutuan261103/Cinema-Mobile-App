@@ -79,7 +79,7 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
     );
 
     if (selectedProvince != null) {
-      Provider.of<ProvinceProvider>(context, listen: false)
+      await Provider.of<ProvinceProvider>(context, listen: false)
           .setSelectedProvince(selectedProvince);
       _fetchCinemas();
     }
