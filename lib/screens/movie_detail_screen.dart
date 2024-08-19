@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:expandable_text/expandable_text.dart';
 
 import '../constants/colors.dart';
 import '../models/movie.dart';
 import '../models/comment.dart';
+import '../models/rating_count.dart';
 import '../widgets/comment_container.dart';
+import '../widgets/rating_movie_info.dart';
 import '../services/comment_service.dart';
+import '../services/rating_service.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -17,11 +21,13 @@ class MovieDetailScreen extends StatefulWidget {
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   late Future<List<Comment>> _commentsFuture;
+  late Future<List<RatingCount>> _ratingsFuture;
 
   @override
   void initState() {
     super.initState();
     _commentsFuture = CommentService().getComments(movieId: widget.movie.id);
+    _ratingsFuture = RatingService().getRatingCount(movieId: widget.movie.id);
   }
 
   @override
@@ -46,7 +52,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 children: [
                   // Movie Poster and Details
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
                     child: Column(
                       children: [
                         Row(
@@ -111,12 +117,32 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             _buildDetailColumn(
                                 'Thời lượng', '${widget.movie.duration} phút'),
                             _buildSeperator(),
-                            _buildDetailColumn('Ngôn ngữ', widget.movie.language),
+                            _buildDetailColumn(
+                                'Ngôn ngữ', widget.movie.language),
                           ],
                         ),
                       ],
                     ),
                   ),
+                  FutureBuilder<List<RatingCount>>(
+                      future: _ratingsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text('Failed to load ratings'));
+                        }
+                        final ratings = snapshot.data!;
+
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: RatingMovieInfo(ratings: ratings),
+                        );
+                      }),
                   Container(
                     height: 8.0,
                     color: Colors.white,
@@ -130,7 +156,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     color: Colors.white,
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
                     child: _buildCommentSection(),
                   ),
                 ],
@@ -139,7 +165,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           ),
           // Fixed Book Ticket Button at the bottom
           Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            padding: const EdgeInsets.all(16),
             child: _buildBookTicketButton(context),
           ),
         ],
@@ -192,9 +218,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Text(
+        ExpandableText(
           value,
           style: const TextStyle(fontSize: 14),
+          maxLines: 5,
+          animation: true,
+          collapseOnTextTap: true,
+          expandText: 'xem thêm',
+          collapseText: 'thu gọn',
+          linkColor: colorPrimary,
+          linkStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.left,
         ),
       ],
     );
@@ -259,7 +296,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 );
               } else {
                 final comments = snapshot.data!;
-                
+
                 return Column(
                   children: comments
                       .map((comment) => CommentContainer(comment: comment))
