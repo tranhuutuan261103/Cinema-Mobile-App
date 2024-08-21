@@ -5,6 +5,7 @@ class Comment {
   final int id;
   final String content;
   final DateTime createdAt;
+  final int likes;
   final Account author;
   final int movieId;
   final List<Comment> replies;
@@ -14,6 +15,7 @@ class Comment {
     required this.id,
     required this.content,
     required this.createdAt,
+    required this.likes,
     required this.author,
     required this.movieId,
     required this.replies,
@@ -26,6 +28,7 @@ class Comment {
       content: json['content'],
       createdAt: DateTime.parse(json['createdDate']),
       author: Account.fromJson(json['user']),
+      likes: json['likes'],
       movieId: json['movieId'],
       replies: json['replies'] != null
           ? (json['replies'] as List).map((e) => Comment.fromJson(e)).toList()

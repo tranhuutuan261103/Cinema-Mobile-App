@@ -8,9 +8,10 @@ import '../models/comment.dart';
 class CommentContainer extends StatelessWidget {
   final Comment comment;
   final bool hasSeparator;
+  final Function onReply;
 
   const CommentContainer(
-      {super.key, required this.comment, this.hasSeparator = false});
+      {super.key, required this.comment, this.hasSeparator = false, required this.onReply});
 
   @override
   Widget build(BuildContext context) {
@@ -118,18 +119,18 @@ class CommentContainer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       color: Colors.white,
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.thumb_up,
                           color: colorPrimary,
                           size: 16,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
-                          '108',
-                          style: TextStyle(
+                          comment.likes.toString(),
+                          style: const TextStyle(
                             fontSize: 14,
                             color: colorPrimary,
                           ),
@@ -140,7 +141,9 @@ class CommentContainer extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    onReply();
+                  },
                   child: Container(
                     width: 100,
                     height: 32,

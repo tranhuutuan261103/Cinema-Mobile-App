@@ -5,6 +5,7 @@ import '../constants/colors.dart';
 import '../models/movie.dart';
 import '../models/comment.dart';
 import '../models/rating_count.dart';
+import '../screens/stacks/comment_detail_screen.dart';
 import '../widgets/comment_container.dart';
 import '../widgets/rating_movie_info.dart';
 import '../services/comment_service.dart';
@@ -52,7 +53,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 children: [
                   // Movie Poster and Details
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                    padding: const EdgeInsets.only(
+                        top: 16.0, left: 16.0, right: 16.0),
                     child: Column(
                       children: [
                         Row(
@@ -156,7 +158,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     color: Colors.white,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                    padding: const EdgeInsets.only(
+                        top: 16.0, left: 16.0, right: 16.0),
                     child: _buildCommentSection(),
                   ),
                 ],
@@ -277,35 +280,41 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               child: const Text('Viết đánh giá')),
         ],
       ),
-      Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: FutureBuilder<List<Comment>>(
-          future: _commentsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+      FutureBuilder<List<Comment>>(
+        future: _commentsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            if (snapshot.hasError) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: Text('Failed to load comments'),
               );
             } else {
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text('Failed to load comments'),
-                );
-              } else {
-                final comments = snapshot.data!;
+              final comments = snapshot.data!;
 
-                return Column(
-                  children: comments
-                      .map((comment) => CommentContainer(comment: comment))
-                      .toList(),
-                );
-              }
+              return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[300]!),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    children: comments
+                        .map((comment) => CommentContainer(comment: comment, onReply: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CommentDetailScreen(comment: comment, movie: widget.movie),
+                            ),
+                          );
+                        }))
+                        .toList(),
+                  ));
             }
-          },
-        ),
+          }
+        },
       ),
     ]);
   }
