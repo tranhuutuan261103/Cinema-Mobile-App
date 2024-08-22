@@ -72,17 +72,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final isAuthenticated = Provider.of<AuthProvider>(context).isAuthenticated;
 
-    // Show login dialog if not authenticated
-    if (!isAuthenticated) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showLoginDialog(context);
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorPrimary,
-        title: const Text('Trang phim của tôi'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Trang phim của tôi'),
+            IconButton(
+                onPressed: () {
+                  // Push the setting screen
+                  Navigator.of(context).pushNamed('/settings');
+                },
+                icon: const Icon(Icons.settings, color: Colors.white)),
+          ],
+        ),
       ),
       body: isAuthenticated
           ? _buildProfileContent(context)
@@ -99,65 +103,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      _showLoginDialog(context);
+                      Navigator.of(context).pushNamed('/login');
                     },
                     child: const Text('Đăng nhập'),
                   ),
                 ],
               ),
             ),
-    );
-  }
-
-  void _showLoginDialog(BuildContext context) {
-    final usernameController = TextEditingController();
-    final passwordController = TextEditingController();
-
-    showDialog(
-      context: context,
-      barrierDismissible:
-          false, // Prevent dismissal by tapping outside the dialog
-      builder: (context) => AlertDialog(
-        title: const Text('Login'),
-        content: SizedBox(
-          width: 300,
-          height: 120,
-          child: Column(
-            children: [
-              // Add a text field for the username
-              TextField(
-                controller: usernameController,
-                decoration: const InputDecoration(labelText: 'Username'),
-              ),
-              // Add a text field for the password
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              final username = usernameController.text;
-              final password = passwordController.text;
-              Provider.of<AuthProvider>(context, listen: false)
-                  .login(username, password);
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: const Text('Login'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-              // Redirect to the home page
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -213,7 +165,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(40),
                                   child: Image.network(
-                                    snapshot.data!.avatarUrl ?? "https://assetsio.gnwcdn.com/Genshin-Impact-Furina-best-build%2C-Talent-and-Ascension-materials%2C-weapon%2C-and-team-cover.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
+                                    snapshot.data!.avatarUrl ??
+                                        "https://assetsio.gnwcdn.com/Genshin-Impact-Furina-best-build%2C-Talent-and-Ascension-materials%2C-weapon%2C-and-team-cover.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
                                     width: 80,
                                     height: 80,
                                   ),
