@@ -8,10 +8,11 @@ import '../models/comment.dart';
 class CommentContainer extends StatelessWidget {
   final Comment comment;
   final bool hasSeparator;
+  final Function(int) onLike;
   final Function onReply;
 
   const CommentContainer(
-      {super.key, required this.comment, this.hasSeparator = false, required this.onReply});
+      {super.key, required this.comment, this.hasSeparator = false, required this.onLike, required this.onReply});
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +108,9 @@ class CommentContainer extends StatelessWidget {
             Row(
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    onLike(comment.id);
+                  },
                   child: Container(
                     width: 100,
                     height: 32,
@@ -122,17 +125,17 @@ class CommentContainer extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.thumb_up,
+                        Icon(
+                          comment.isLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined,
                           color: colorPrimary,
                           size: 16,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           comment.likes.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color: colorPrimary,
+                            color: comment.isLiked ? colorPrimary : Colors.grey[600]!,
                           ),
                         ),
                       ],

@@ -5,7 +5,8 @@ class Comment {
   final int id;
   final String content;
   final DateTime createdAt;
-  final int likes;
+  int likes;
+  bool isLiked = false;
   final Account author;
   final int movieId;
   final List<Comment> replies;
@@ -16,6 +17,7 @@ class Comment {
     required this.content,
     required this.createdAt,
     required this.likes,
+    required this.isLiked,
     required this.author,
     required this.movieId,
     required this.replies,
@@ -29,6 +31,7 @@ class Comment {
       createdAt: DateTime.parse(json['createdDate']),
       author: Account.fromJson(json['user']),
       likes: json['likes'],
+      isLiked: json['isLiked'],
       movieId: json['movieId'],
       replies: json['replies'] != null
           ? (json['replies'] as List).map((e) => Comment.fromJson(e)).toList()

@@ -1,17 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/colors.dart';
 import '../../models/comment.dart';
 import '../../models/movie.dart';
+import '../../providers/auth_provider.dart';
+import '../../services/comment_service.dart';
 import '../../utils/datetime_helper.dart';
 import '../../widgets/comment_container.dart';
 
-class CommentDetailScreen extends StatelessWidget {
+class CommentDetailScreen extends StatefulWidget {
   final Comment comment;
   final Movie movie;
 
   const CommentDetailScreen(
       {super.key, required this.comment, required this.movie});
+
+  @override
+  State<CommentDetailScreen> createState() => _CommentDetailScreenState();
+}
+
+class _CommentDetailScreenState extends State<CommentDetailScreen> {
+  void handleLikeComment(int commentId) {
+    // find the comment with the given id
+    final c =
+        widget.comment.replies.firstWhere((element) => element.id == commentId);
+
+    // update the likes of the comment
+    if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
+      final token = Provider.of<AuthProvider>(context, listen: false).getToken;
+      CommentService().likeComment(token, c.id);
+      if (c.isLiked) {
+        setState(() {
+          c.likes--;
+          c.isLiked = false;
+        });
+      } else {
+        setState(() {
+          c.likes++;
+          c.isLiked = true;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +67,7 @@ class CommentDetailScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: Text(
-                        comment.content,
+                        widget.comment.content,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -62,7 +93,26 @@ class CommentDetailScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      if (Provider.of<AuthProvider>(context, listen: false)
+                          .isAuthenticated) {
+                        final token =
+                            Provider.of<AuthProvider>(context, listen: false)
+                                .getToken;
+                        CommentService().likeComment(token, widget.comment.id);
+                        if (widget.comment.isLiked) {
+                          setState(() {
+                            widget.comment.likes--;
+                            widget.comment.isLiked = false;
+                          });
+                        } else {
+                          setState(() {
+                            widget.comment.likes++;
+                            widget.comment.isLiked = true;
+                          });
+                        }
+                      }
+                    },
                     child: Container(
                       width: 100,
                       height: 32,
@@ -77,17 +127,21 @@ class CommentDetailScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.thumb_up,
+                          Icon(
+                            widget.comment.isLiked
+                                ? Icons.thumb_up
+                                : Icons.thumb_up_alt_outlined,
                             color: colorPrimary,
                             size: 16,
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            comment.likes.toString(),
-                            style: const TextStyle(
+                            widget.comment.likes.toString(),
+                            style: TextStyle(
                               fontSize: 14,
-                              color: colorPrimary,
+                              color: widget.comment.isLiked
+                                  ? colorPrimary
+                                  : Colors.grey,
                             ),
                           ),
                         ],
@@ -118,7 +172,7 @@ class CommentDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            comment.replies.length.toString(),
+                            widget.comment.replies.length.toString(),
                             style: const TextStyle(
                               fontSize: 14,
                               color: colorPrimary,
@@ -132,12 +186,13 @@ class CommentDetailScreen extends StatelessWidget {
               ),
             ),
             Column(
-              children: comment.replies
+              children: widget.comment.replies
                   .map((comment) => CommentContainer(
                       comment: comment,
-                      onReply: () {
-
-                      }))
+                      onLike: (commentId) {
+                        handleLikeComment(commentId);
+                      },
+                      onReply: () {}))
                   .toList(),
             )
           ],
@@ -160,8 +215,8 @@ class CommentDetailScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
-                      image: NetworkImage(
-                          movie.imageUrl), // Loads the image from the network
+                      image: NetworkImage(widget
+                          .movie.imageUrl), // Loads the image from the network
                       fit: BoxFit
                           .cover, // Ensures the image covers the container
                     ),
@@ -180,8 +235,8 @@ class CommentDetailScreen extends StatelessWidget {
                     ),
                     child: CircleAvatar(
                       radius: 14,
-                      backgroundImage: comment.author.avatarUrl != null
-                          ? NetworkImage(comment.author.avatarUrl!)
+                      backgroundImage: widget.comment.author.avatarUrl != null
+                          ? NetworkImage(widget.comment.author.avatarUrl!)
                           : const NetworkImage(
                               'https://via.placeholder.com/150'),
                     ),
@@ -195,7 +250,7 @@ class CommentDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Đánh giá ${movie.title}',
+                    'Đánh giá ${widget.movie.title}',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -206,7 +261,7 @@ class CommentDetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${comment.author.firstName} ${comment.author.lastName}',
+                        '${widget.comment.author.firstName} ${widget.comment.author.lastName}',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -215,7 +270,8 @@ class CommentDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        DatetimeHelper.getFormattedDate(comment.createdAt),
+                        DatetimeHelper.getFormattedDate(
+                            widget.comment.createdAt),
                         style: const TextStyle(
                           fontSize: 10,
                           color: Colors.grey,
