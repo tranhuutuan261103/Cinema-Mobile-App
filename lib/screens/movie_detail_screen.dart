@@ -63,6 +63,32 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             comment.isLiked = true;
           });
         }
+      } else {
+        // show a dialog to ask the user to login
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Bạn cần đăng nhập'),
+              content: const Text('Để thích bình luận, vui lòng đăng nhập'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Đóng'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/login');
+                  },
+                  child: const Text('Đăng nhập'),
+                ),
+              ],
+            );
+          },
+        );
       }
     });
   }

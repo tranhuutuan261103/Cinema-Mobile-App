@@ -41,6 +41,31 @@ class _CommentDetailScreenState extends State<CommentDetailScreen> {
           c.isLiked = true;
         });
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Bạn cần đăng nhập'),
+            content: const Text('Để thích bình luận, vui lòng đăng nhập'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Đóng'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamed('/login');
+                },
+                child: const Text('Đăng nhập'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -111,6 +136,32 @@ class _CommentDetailScreenState extends State<CommentDetailScreen> {
                             widget.comment.isLiked = true;
                           });
                         }
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Bạn cần đăng nhập'),
+                              content: const Text(
+                                  'Để thích bình luận, vui lòng đăng nhập'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Đóng'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pushNamed('/login');
+                                  },
+                                  child: const Text('Đăng nhập'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }
                     },
                     child: Container(
