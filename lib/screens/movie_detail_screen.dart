@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/colors.dart';
 import '../models/movie.dart';
@@ -8,6 +9,7 @@ import '../models/rating_count.dart';
 import '../screens/stacks/comment_detail_screen.dart';
 import '../widgets/comment_container.dart';
 import '../widgets/rating_movie_info.dart';
+import '../providers/auth_provider.dart';
 import '../services/comment_service.dart';
 import '../services/rating_service.dart';
 
@@ -27,8 +29,42 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _commentsFuture = CommentService().getComments(movieId: widget.movie.id);
+    if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
+      final token = Provider.of<AuthProvider>(context, listen: false).getToken;
+      _commentsFuture = CommentService().getComments(
+        movieId: widget.movie.id,
+        token: token,
+      );
+    } else {
+      _commentsFuture = CommentService().getComments(movieId: widget.movie.id);
+    }
     _ratingsFuture = RatingService().getRatingCount(movieId: widget.movie.id);
+  }
+
+  void handleLikeComment(int commentId) {
+    // find the comment with the given id
+    final comment = _commentsFuture.then((comments) {
+      return comments.firstWhere((comment) => comment.id == commentId);
+    });
+
+    // update the likes of the comment
+    comment.then((comment) {
+      if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
+        final token = Provider.of<AuthProvider>(context, listen: false).getToken;
+        CommentService().likeComment(token, comment.id);
+        if (comment.isLiked) {
+          setState(() {
+            comment.likes--;
+            comment.isLiked = false;
+          });
+        } else {
+          setState(() {
+            comment.likes++;
+            comment.isLiked = true;
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -302,7 +338,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   ),
                   child: Column(
                     children: comments
-                        .map((comment) => CommentContainer(comment: comment, onReply: () {
+                        .map((comment) => CommentContainer(
+                          comment: comment,
+                          onLike: (commentId) {
+                            handleLikeComment(commentId);
+                          },
+                          onReply: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
