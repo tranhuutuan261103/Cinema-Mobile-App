@@ -36,6 +36,33 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> register(
+    String firstName,
+    String lastName,
+    String username,
+    String phone,
+    String email,
+    String password,
+  ) async {
+    try {
+      final authService = AuthService();
+      token = await authService.register(
+        firstName,
+        lastName,
+        username,
+        phone,
+        email,
+        password,
+      );
+      _isAuthenticated = true;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+    } catch (e) {
+      _isAuthenticated = false;
+    }
+    notifyListeners();
+  }
+
   void logout() async {
     _isAuthenticated = false;
     token = "";
