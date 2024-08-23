@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
+
 class TextFieldCustom extends StatelessWidget {
   const TextFieldCustom({
     super.key,
@@ -21,9 +23,15 @@ class TextFieldCustom extends StatelessWidget {
         hintText: label,
         border: const OutlineInputBorder(),
         prefixIcon: Icon(icon),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
+            color: colorPrimary,
+          ),
+        ),
       ),
       controller: controller,
-      obscureText: true,
+      obscureText: isObscure,
     );
   }
 }

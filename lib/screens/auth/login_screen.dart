@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart'; // For orientation control
 
+import '../../constants/colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/text_field_custom.dart';
 
@@ -89,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: double.infinity,
                       child: MaterialButton(
                         onPressed: _login,
-                        color: Theme.of(context).primaryColor,
+                        color: colorPrimary,
                         textColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: const Text('Đăng nhập'),
@@ -109,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.of(context).pushNamed('/register');
                       },
-                      child: const Text('Đăng ký'),
+                      child: const Text('Đăng ký', style: TextStyle(color: colorPrimary)),
                     ),
                   ],
                 ),
