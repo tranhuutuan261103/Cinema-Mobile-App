@@ -12,4 +12,9 @@ class SeatStatus {
       isAvailable: json['isAvailable'],
     );
   }
+
+  @override
+  String toString() {
+    return 'SeatStatus{id: $id, statusName: $statusName, isAvailable: $isAvailable}';
+  }
 }
