@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants/colors.dart';
 import '../../widgets/text_field_custom.dart';
+import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -39,6 +40,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _emailController.text,
       _passwordController.text,
     );
+
+    // Check if the widget is still mounted before using the context
+    if (!mounted) return;
 
     if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
       Navigator.of(context).pop();
@@ -151,7 +155,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Text('Tôi đã có tài khoản. '),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed('/login');
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                        );
                       },
                       child: const Text('Đăng nhập',
                           style: TextStyle(color: colorPrimary)),

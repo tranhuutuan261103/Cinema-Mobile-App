@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/services.dart'; // For orientation control
 
 import '../../constants/colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/text_field_custom.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,11 +23,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    // Reset orientation to default when disposing the screen
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     super.dispose();
   }
 
@@ -42,6 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _emailController.text,
       _passwordController.text,
     );
+
+    // Check if the widget is still mounted before using the context
+  if (!mounted) return;
 
     if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
       Navigator.of(context).pop();
@@ -108,7 +106,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text('Chưa có tài khoản? '),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed('/register');
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => const RegisterScreen()),
+                        );
                       },
                       child: const Text('Đăng ký', style: TextStyle(color: colorPrimary)),
                     ),

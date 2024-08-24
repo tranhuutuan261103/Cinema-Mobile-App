@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants/colors.dart';
 import '../../models/screening.dart';
+import '../../models/seat.dart';
 import '../../services/screening_service.dart';
 import '../../utils/datetime_helper.dart';
 
@@ -19,6 +20,7 @@ class SeatSelectionScreen extends StatefulWidget {
 
 class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   late Future<Screening> _futureScreening;
+  final List<Seat> _selectedSeats = [];
 
   @override
   void initState() {
@@ -26,9 +28,33 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     _futureScreening = fetchScreening();
   }
 
+  @override
+  void didUpdateWidget(covariant SeatSelectionScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.screeningId != widget.screeningId) {
+      _futureScreening = fetchScreening();
+    }
+  }
+
+  @override
+  void dispose() {
+    _selectedSeats.clear();
+    super.dispose();
+  }
+
   Future<Screening> fetchScreening() async {
     // Get screening data from API by screening.id
     return ScreeningService().getScreening(widget.screeningId);
+  }
+
+  void _handleSeatSelection(Seat seat) {
+    setState(() {
+      if (_selectedSeats.contains(seat)) {
+        _selectedSeats.remove(seat);
+      } else if (seat.seatStatus.isAvailable) {
+        _selectedSeats.add(seat);
+      }
+    });
   }
 
   @override
@@ -106,22 +132,30 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                                       bottom: row != 11
                                           ? widget.spacing
                                           : 0), // Thêm khoảng cách bên dưới trừ hàng cuối cùng
-                                  child: Container(
-                                    width: widget.seatSize,
-                                    height: widget.seatSize,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.black,
+                                  child: InkWell(
+                                    onTap: () {
+                                      _handleSeatSelection(seat);
+                                    },
+                                    child: Container(
+                                      width: widget.seatSize,
+                                      height: widget.seatSize,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.black,
+                                        ),
+                                        color: _selectedSeats.contains(seat)
+                                            ? Colors.grey
+                                            : seat.seatStatus.isAvailable
+                                                ? Colors.green
+                                                : Colors.red,
                                       ),
-                                      color: seat.seatStatus.isAvailable
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '${String.fromCharCode(65 + row)}${column + 1}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                      child: Center(
+                                        child: Text(
+                                          '${String.fromCharCode(65 + row)}${column + 1}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -146,22 +180,25 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                       ),
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.green,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildSeatInfo(
+                            color: Colors.green,
+                            text: 'Available',
+                          ),
+                          const SizedBox(width: 16),
+                          _buildSeatInfo(
+                            color: Colors.red,
+                            text: 'Booked',
+                          ),
+                        ],
                       ),
-                      const Text('Available'),
-                      Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.red,
-                      ),
-                      const Text('Booked'),
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -238,18 +275,18 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Row(
+                      Row(
                         children: [
-                          Text(
+                          const Text(
                             'Tạm tính',
                             style: TextStyle(
                               fontSize: 14,
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Text(
-                            '0đ',
-                            style: TextStyle(
+                            '${_selectedSeats.length * 45000}đ',
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -280,6 +317,25 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
           }
         },
       ),
+    );
+  }
+
+  Widget _buildSeatInfo({Color? color, String? text}) {
+    return Row(
+      children: [
+        Container(
+          width: 20,
+          height: 20,
+          color: color,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          text ?? 'Booked',
+          style: const TextStyle(
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }

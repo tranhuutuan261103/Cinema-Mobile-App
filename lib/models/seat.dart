@@ -21,4 +21,9 @@ class Seat {
       seatStatus: SeatStatus.fromJson(json['seatStatus']),
     );
   }
+
+  @override
+  String toString() {
+    return 'Seat{id: $id, row: $row, number: $number, seatStatus: $seatStatus}';
+  }
 }
