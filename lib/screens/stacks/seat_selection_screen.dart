@@ -6,6 +6,11 @@ import '../../models/seat.dart';
 import '../../services/screening_service.dart';
 import '../../utils/datetime_helper.dart';
 
+import '../../widgets/seats/seat_normal.dart';
+import '../../widgets/seats/seat_vip.dart';
+import '../../widgets/seats/seat_booked.dart';
+import '../../widgets/seats/seat_booking.dart';
+
 class SeatSelectionScreen extends StatefulWidget {
   final int screeningId;
   final double offset = 10.0;
@@ -136,29 +141,21 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                                     onTap: () {
                                       _handleSeatSelection(seat);
                                     },
-                                    child: Container(
-                                      width: widget.seatSize,
-                                      height: widget.seatSize,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.black,
-                                        ),
-                                        color: _selectedSeats.contains(seat)
-                                            ? Colors.grey
-                                            : seat.seatStatus.isAvailable
-                                                ? Colors.green
-                                                : Colors.red,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${String.fromCharCode(65 + row)}${column + 1}',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    child: _selectedSeats.contains(seat)
+                                        ? SeatBooking(
+                                            seat: seat,
+                                            seatSize: widget.seatSize)
+                                        : seat.seatStatus.isAvailable
+                                            ? seat.seatType.id == 2
+                                                ? SeatVip(
+                                                    seat: seat,
+                                                    seatSize: widget.seatSize)
+                                                : SeatNormal(
+                                                    seat: seat,
+                                                    seatSize: widget.seatSize)
+                                            : SeatBooked(
+                                                seat: seat,
+                                                seatSize: widget.seatSize),
                                   ),
                                 );
                               }),
@@ -188,13 +185,23 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildSeatInfo(
-                            color: Colors.green,
-                            text: 'Available',
+                            child: const SeatBooked(seat: null, seatSize: 20),
+                            text: 'Đã đặt',
                           ),
                           const SizedBox(width: 16),
                           _buildSeatInfo(
-                            color: Colors.red,
-                            text: 'Booked',
+                            child: const SeatBooking(seat: null, seatSize: 20),
+                            text: 'Ghế bạn chọn',
+                          ),
+                          const SizedBox(width: 16),
+                          _buildSeatInfo(
+                            child: const SeatNormal(seat: null, seatSize: 20),
+                            text: 'Ghế thường',
+                          ),
+                          const SizedBox(width: 16),
+                          _buildSeatInfo(
+                            child: const SeatVip(seat: null, seatSize: 20),
+                            text: 'Ghế VIP',
                           ),
                         ],
                       ),
@@ -320,14 +327,10 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     );
   }
 
-  Widget _buildSeatInfo({Color? color, String? text}) {
+  Widget _buildSeatInfo({required Widget child, String? text}) {
     return Row(
       children: [
-        Container(
-          width: 20,
-          height: 20,
-          color: color,
-        ),
+        child,
         const SizedBox(width: 8),
         Text(
           text ?? 'Booked',
