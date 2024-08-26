@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../constants/colors.dart';
 import '../../models/screening.dart';
 import '../../models/seat.dart';
+import '../../models/person_type.dart';
 import '../../services/screening_service.dart';
 import '../../utils/datetime_helper.dart';
 
@@ -26,6 +27,12 @@ class SeatSelectionScreen extends StatefulWidget {
 class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   late Future<Screening> _futureScreening;
   final List<Seat> _selectedSeats = [];
+  final List<PersonType> _personTypes = [
+    PersonType(id: 1, name: 'Người lớn'),
+    PersonType(id: 2, name: 'Trẻ em'),
+    PersonType(id: 3, name: 'Sinh viên'),
+  ];
+  PersonType _selectedPersonType = PersonType(id: 1, name: 'Người lớn');
 
   @override
   void initState() {
@@ -52,6 +59,15 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     return ScreeningService().getScreening(widget.screeningId);
   }
 
+  void _changePersonType() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return _buildChangePersonTypeDialog();
+      },
+    );
+  }
+
   void _handleSeatSelection(Seat seat) {
     setState(() {
       if (_selectedSeats.contains(seat)) {
@@ -60,6 +76,16 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
         _selectedSeats.add(seat);
       }
     });
+  }
+
+  double get _totalPrice {
+    return _selectedSeats.fold(
+        0,
+        (previousValue, seat) =>
+            previousValue +
+            seat.seatPrices
+                .firstWhere((seatPrice) => seatPrice.personTypeId == _selectedPersonType.id)
+                .price);
   }
 
   @override
@@ -235,7 +261,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                           ),
                           TextButton(
                               onPressed: () {
-                                // Change screening action
+                                _changePersonType();
                               },
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets
@@ -246,10 +272,11 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                                     .shrinkWrap, // Thu nhỏ vùng nhấn
                                 visualDensity: VisualDensity
                                     .compact, // Giảm mật độ hiển thị
+                                enableFeedback: false, // Tắt hiệu ứng khi nhấn
                               ),
-                              child: const Text(
-                                'Đổi suất',
-                                style: TextStyle(
+                              child: Text(
+                                _selectedPersonType.name,
+                                style: const TextStyle(
                                   color: colorPrimary,
                                 ),
                               )),
@@ -292,7 +319,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                           ),
                           const Spacer(),
                           Text(
-                            '${_selectedSeats.length * 45000}đ',
+                            '$_totalPriceđ',
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -339,6 +366,44 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildChangePersonTypeDialog() {
+    return AlertDialog(
+      title: const Text('Chọn loại vé'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text('Người lớn'),
+            onTap: () {
+              setState(() {
+                _selectedPersonType = _personTypes[0];
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            title: const Text('Trẻ em'),
+            onTap: () {
+              setState(() {
+                _selectedPersonType = _personTypes[1];
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            title: const Text('Sinh viên'),
+            onTap: () {
+              setState(() {
+                _selectedPersonType = _personTypes[2];
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
     );
   }
 }
