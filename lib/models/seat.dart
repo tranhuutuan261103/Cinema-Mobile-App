@@ -1,5 +1,6 @@
 import './seat_status.dart';
 import './seat_type.dart';
+import './seat_price.dart';
 
 class Seat {
   final int id;
@@ -7,6 +8,7 @@ class Seat {
   final int number;
   final SeatStatus seatStatus;
   final SeatType seatType;
+  final List<SeatPrice> seatPrices;
 
   Seat({
     required this.id,
@@ -14,6 +16,7 @@ class Seat {
     required this.number,
     required this.seatStatus,
     required this.seatType,
+    this.seatPrices = const [],
   });
 
   factory Seat.fromJson(Map<String, dynamic> json) {
@@ -23,6 +26,7 @@ class Seat {
       number: json['number'],
       seatStatus: SeatStatus.fromJson(json['seatStatus']),
       seatType: SeatType.fromJson(json['seatType']),
+      seatPrices: (json['prices'] as List).map((seatPrice) => SeatPrice.fromJson(seatPrice)).toList(),
     );
   }
 
