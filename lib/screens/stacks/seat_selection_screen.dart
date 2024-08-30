@@ -1,3 +1,4 @@
+import 'package:cinema_mobile_app/models/auditorium.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/colors.dart';
@@ -13,12 +14,13 @@ import '../../widgets/seats/seat_booked.dart';
 import '../../widgets/seats/seat_booking.dart';
 
 class SeatSelectionScreen extends StatefulWidget {
-  final int screeningId;
+  final Auditorium auditorium;
+  final Screening screening;
   final double offset = 10.0;
   final double seatSize = 30.0;
   final double spacing = 10.0; // Khoảng cách giữa các ghế
 
-  const SeatSelectionScreen({super.key, required this.screeningId});
+  const SeatSelectionScreen({super.key, required this.auditorium, required this.screening});
 
   @override
   State<SeatSelectionScreen> createState() => _SeatSelectionScreenState();
@@ -43,7 +45,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   @override
   void didUpdateWidget(covariant SeatSelectionScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.screeningId != widget.screeningId) {
+    if (oldWidget.screening.id != widget.screening.id) {
       _futureScreening = fetchScreening();
     }
   }
@@ -56,7 +58,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
   Future<Screening> fetchScreening() async {
     // Get screening data from API by screening.id
-    return ScreeningService().getScreening(widget.screeningId);
+    return ScreeningService().getScreening(widget.screening.id);
   }
 
   void _changePersonType() {
@@ -84,7 +86,8 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
         (previousValue, seat) =>
             previousValue +
             seat.seatPrices
-                .firstWhere((seatPrice) => seatPrice.personTypeId == _selectedPersonType.id)
+                .firstWhere((seatPrice) =>
+                    seatPrice.personTypeId == _selectedPersonType.id)
                 .price);
   }
 
@@ -93,19 +96,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorPrimary,
-        title: FutureBuilder<Screening>(
-          future: _futureScreening,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              final screening = snapshot.data!;
-              return Text(screening.auditorium!.name);
-            }
-          },
-        ),
+        title: Text(widget.auditorium.name),
       ),
       body: FutureBuilder<Screening>(
         future: _futureScreening,

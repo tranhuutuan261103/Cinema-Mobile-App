@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import './routes/app_routes.dart';
-import './screens/stacks/booking_screen.dart';
 import './screens/province_selection_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/auth/login_screen.dart';
@@ -41,7 +40,6 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const AppRoutes(),
-        '/booking': (context) => const BookingScreen(),
         '/city': (context) => const ProvinceSelectionScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/login': (context) => const LoginScreen(),

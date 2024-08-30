@@ -6,6 +6,7 @@ import '../constants/colors.dart';
 import '../models/movie.dart';
 import '../models/comment.dart';
 import '../models/rating_count.dart';
+import './stacks/booking_screen.dart';
 import '../screens/stacks/comment_detail_screen.dart';
 import '../widgets/comment_container.dart';
 import '../widgets/rating_movie_info.dart';
@@ -50,7 +51,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     // update the likes of the comment
     comment.then((comment) {
       if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
-        final token = Provider.of<AuthProvider>(context, listen: false).getToken;
+        final token =
+            Provider.of<AuthProvider>(context, listen: false).getToken;
         CommentService().likeComment(token, comment.id);
         if (comment.isLiked) {
           setState(() {
@@ -365,18 +367,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   child: Column(
                     children: comments
                         .map((comment) => CommentContainer(
-                          comment: comment,
-                          onLike: (commentId) {
-                            handleLikeComment(commentId);
-                          },
-                          onReply: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CommentDetailScreen(comment: comment, movie: widget.movie),
-                            ),
-                          );
-                        }))
+                            comment: comment,
+                            onLike: (commentId) {
+                              handleLikeComment(commentId);
+                            },
+                            onReply: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CommentDetailScreen(
+                                      comment: comment, movie: widget.movie),
+                                ),
+                              );
+                            }))
                         .toList(),
                   ));
             }
@@ -392,7 +395,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       child: ElevatedButton(
         onPressed: () {
           // Navigate to the booking screen
-          Navigator.pushNamed(context, '/booking', arguments: widget.movie);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BookingScreen(movie: widget.movie),
+              ));
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),

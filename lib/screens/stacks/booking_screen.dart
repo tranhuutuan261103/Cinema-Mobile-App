@@ -14,7 +14,8 @@ import '../../services/screening_service.dart';
 import '../../utils/datetime_helper.dart';
 
 class BookingScreen extends StatefulWidget {
-  const BookingScreen({super.key});
+  final Movie movie;
+  const BookingScreen({super.key, required this.movie});
 
   @override
   State<BookingScreen> createState() => _BookingScreenState();
@@ -45,10 +46,13 @@ class _BookingScreenState extends State<BookingScreen> {
 
   void _fetchCinemas() {
     int provinceId = Provider.of<ProvinceProvider>(context, listen: false)
-        .selectedProvince
-        !.id;
+        .selectedProvince!
+        .id;
     setState(() {
-      _cinemasFuture = ScreeningService().getScreenings(provinceId: provinceId, startDate: _selectedDate);
+      _cinemasFuture = ScreeningService().getScreeningsByMovieId(
+          movieId: widget.movie.id,
+          provinceId: provinceId,
+          startDate: _selectedDate);
       if (_selectedCinema == null) {
         _cinemasFuture.then((cinemas) {
           if (cinemas.isNotEmpty) {
@@ -63,12 +67,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Movie movie = ModalRoute.of(context)!.settings.arguments as Movie;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorPrimary,
-        title: Text(movie.title),
+        title: Text(widget.movie.title),
       ),
       body: Column(
         children: [
@@ -89,10 +91,17 @@ class _BookingScreenState extends State<BookingScreen> {
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           setState(() {
-                            int provinceId = Provider.of<ProvinceProvider>(context, listen: false).selectedProvince!.id;
+                            int provinceId = Provider.of<ProvinceProvider>(
+                                    context,
+                                    listen: false)
+                                .selectedProvince!
+                                .id;
                             _selectedDate = _days[index];
-                            _cinemasFuture = ScreeningService().getScreenings(
-                                provinceId: provinceId, startDate: _selectedDate);
+                            _cinemasFuture = ScreeningService()
+                                .getScreeningsByMovieId(
+                                    movieId: widget.movie.id,
+                                    provinceId: provinceId,
+                                    startDate: _selectedDate);
                             _cinemasFuture.then((cinemas) {
                               if (cinemas.isNotEmpty) {
                                 setState(() {
@@ -375,8 +384,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       SeatSelectionScreen(
-                                                          screeningId:
-                                                              screening.id),
+                                                          auditorium:
+                                                              auditorium,
+                                                          screening: screening),
                                                 ),
                                               );
                                             },
