@@ -38,6 +38,34 @@ class ScreeningService {
     }
   }
 
+  Future<List<Cinema>> getScreeningsByAuditoriumId({int? auditoriumId, int? provinceId = 1, DateTime? startDate}) async {
+    try {
+      final ioClient = getUnsafeIOClient();
+
+      startDate ??= DateTime.now();
+
+      final response = await ioClient.get(Uri.parse("$_baseUrl/auditorium/$auditoriumId?provinceId=$provinceId&startDate=${startDate.toIso8601String()}"), 
+        headers: {
+          "Accept": "application/json",
+        }
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((json) => Cinema.fromJson(json)).toList();
+      } else {
+        if (kDebugMode) {
+          print("Failed to load cinemas: ${response.statusCode}");
+        }
+        return [];
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
+
   Future<Screening> getScreening(int id) {
     final ioClient = getUnsafeIOClient();
 

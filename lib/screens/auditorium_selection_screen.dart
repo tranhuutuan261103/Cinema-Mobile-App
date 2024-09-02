@@ -43,26 +43,20 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
     if (provinceId != null) {
       setState(() {
         _cinemasFuture = CinemaService().getCinemas(provinceId: provinceId);
-        _cinemasFuture.then((cinemas) {
-          if (cinemas.isNotEmpty) {
-            setState(() {
-              _selectedCinema = cinemas[0];
-            });
-          }
-        });
       });
     } else {
       setState(() {
         _cinemasFuture = CinemaService().getCinemas();
-        _cinemasFuture.then((cinemas) {
-          if (cinemas.isNotEmpty) {
-            setState(() {
-              _selectedCinema = cinemas[0];
-            });
-          }
-        });
       });
     }
+
+    _cinemasFuture.then((cinemas) {
+      if (cinemas.isNotEmpty) {
+        setState(() {
+          _selectedCinema = cinemas[0];
+        });
+      }
+    });
   }
 
   void _showProvinceSelectionScreen(BuildContext context) async {
