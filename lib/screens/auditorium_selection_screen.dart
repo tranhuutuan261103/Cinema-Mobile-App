@@ -1,3 +1,4 @@
+import 'package:cinema_mobile_app/screens/stacks/screening_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -226,61 +227,73 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                                 children: auditoriums.map((auditorium) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.network(
-                                        _selectedCinema?.logoUrl ??
-                                            cinemas[0].logoUrl,
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  auditorium.name,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "${auditorium.latitude} ${auditorium.longitude}",
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Icon(Icons
-                                                .arrow_forward_ios_rounded),
-                                          ],
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ScreeningSelectionScreen(
+                                                auditorium: auditorium),
+                                      ));
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Image.network(
+                                          _selectedCinema?.logoUrl ??
+                                              cinemas[0].logoUrl,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    auditorium.address,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    auditorium.name,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "${auditorium.latitude} ${auditorium.longitude}",
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Icon(Icons
+                                                  .arrow_forward_ios_rounded),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  if (auditorium != auditoriums.last)
-                                    const Divider(),
-                                ],
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      auditorium.address,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                    if (auditorium != auditoriums.last)
+                                      const Divider(),
+                                  ],
+                                ),
                               );
                             }).toList()),
                           ),

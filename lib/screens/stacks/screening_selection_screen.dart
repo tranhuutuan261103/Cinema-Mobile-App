@@ -1,15 +1,12 @@
 import 'package:cinema_mobile_app/models/auditorium.dart';
+import 'package:cinema_mobile_app/screens/movie_detail_screen.dart';
 import 'package:cinema_mobile_app/widgets/screening_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../constants/colors.dart';
-import '../../models/cinema.dart';
-import '../../widgets/cinema_button.dart';
+import '../../models/movie.dart';
 import '../../widgets/not_found_container.dart';
 import './seat_selection_screen.dart';
-import '../../screens/province_selection_screen.dart';
-import '../../providers/province_provider.dart';
 import '../../services/screening_service.dart';
 import '../../utils/datetime_helper.dart';
 
@@ -18,20 +15,20 @@ class ScreeningSelectionScreen extends StatefulWidget {
   const ScreeningSelectionScreen({super.key, required this.auditorium});
 
   @override
-  State<ScreeningSelectionScreen> createState() => _ScreeningSelectionScreenState();
+  State<ScreeningSelectionScreen> createState() =>
+      _ScreeningSelectionScreenState();
 }
 
 class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
   late final List<DateTime> _days;
   DateTime _selectedDate = DateTime.now();
 
-  late Future<List<Cinema>> _cinemasFuture;
-  Cinema? _selectedCinema;
+  late Future<List<Movie>> _moviesFuture;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _fetchCinemas();
+    _fetchMovies();
   }
 
   @override
@@ -41,27 +38,13 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
       final date = DateTime.now().add(Duration(days: index));
       return date;
     });
-    _fetchCinemas();
+    _fetchMovies();
   }
 
-  void _fetchCinemas() {
-    int provinceId = Provider.of<ProvinceProvider>(context, listen: false)
-        .selectedProvince!
-        .id;
+  void _fetchMovies() {
     setState(() {
-      _cinemasFuture = ScreeningService().getScreeningsByAuditoriumId(
-          auditoriumId: widget.auditorium.id,
-          provinceId: provinceId,
-          startDate: _selectedDate);
-      if (_selectedCinema == null) {
-        _cinemasFuture.then((cinemas) {
-          if (cinemas.isNotEmpty) {
-            setState(() {
-              _selectedCinema = cinemas[0];
-            });
-          }
-        });
-      }
+      _moviesFuture = ScreeningService().getScreeningsByAuditoriumId(
+          auditoriumId: widget.auditorium.id, startDate: _selectedDate);
     });
   }
 
@@ -91,24 +74,11 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           setState(() {
-                            int provinceId = Provider.of<ProvinceProvider>(
-                                    context,
-                                    listen: false)
-                                .selectedProvince!
-                                .id;
                             _selectedDate = _days[index];
-                            _cinemasFuture = ScreeningService()
-                                .getScreeningsByMovieId(
-                                    movieId: widget.auditorium.id,
-                                    provinceId: provinceId,
+                            _moviesFuture = ScreeningService()
+                                .getScreeningsByAuditoriumId(
+                                    auditoriumId: widget.auditorium.id,
                                     startDate: _selectedDate);
-                            _cinemasFuture.then((cinemas) {
-                              if (cinemas.isNotEmpty) {
-                                setState(() {
-                                  _selectedCinema = cinemas[0];
-                                });
-                              }
-                            });
                           });
                         },
                         child: Container(
@@ -186,8 +156,8 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              child: FutureBuilder<List<Cinema>>(
-                future: _cinemasFuture,
+              child: FutureBuilder<List<Movie>>(
+                future: _moviesFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -205,93 +175,10 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
                       );
                     }
 
-                    final cinemas = snapshot.data!;
-                    final selectedCinema = _selectedCinema ?? cinemas[0];
-                    final auditoriums = selectedCinema.auditoriums;
+                    final movies = snapshot.data!;
 
                     return Column(
                       children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                color: Colors.white,
-                                padding: const EdgeInsets.all(8.0),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: cinemas.map((cinema) {
-                                      return CinemaButton(
-                                        cinema: cinema,
-                                        isSelected: _selectedCinema == cinema,
-                                        onPressed: () {
-                                          setState(() {
-                                            _selectedCinema = cinema;
-                                          });
-                                        },
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${selectedCinema.name} (${selectedCinema.auditoriums.length})',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  _showProvinceSelectionScreen(context);
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: colorPrimary, // Text color
-                                  backgroundColor:
-                                      Colors.transparent, // Background color
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8), // Adjust padding as needed
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  side: const BorderSide(
-                                    color: colorPrimary,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize
-                                      .min, // Ensures the button size fits the content
-                                  children: [
-                                    // Space between text and icon
-                                    const Icon(Icons.center_focus_weak,
-                                        color: colorPrimary), // Icon
-                                    const SizedBox(width: 8),
-                                    Consumer<ProvinceProvider>(builder:
-                                        (context, ProvinceProvider provider,
-                                            child) {
-                                      return Text(
-                                          provider.selectedProvince?.name ??
-                                              "Tỉnh/thành");
-                                    }), // Text
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: ClipRRect(
@@ -300,101 +187,124 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
                               color: Colors.white,
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
-                                children: auditoriums.map((auditorium) {
+                                children: movies.map((movie) {
                                   return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
-                                          Image.network(
-                                            selectedCinema.logoUrl,
-                                            width: 50,
-                                            height: 50,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          const SizedBox(width: 8),
                                           Expanded(
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      auditorium.name,
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      "${auditorium.latitude} ${auditorium.longitude}",
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const Icon(Icons
-                                                    .arrow_forward_ios_rounded),
-                                              ],
+                                            child: Text(
+                                              movie.title,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        auditorium.address,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      GridView.builder(
-                                        shrinkWrap:
-                                            true, // Ensures the GridView only takes up necessary space
-                                        physics:
-                                            const NeverScrollableScrollPhysics(), // Disable scrolling for this GridView
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount:
-                                              3, // Adjust this number based on your design
-                                          crossAxisSpacing:
-                                              8.0, // Spacing between columns
-                                          mainAxisSpacing:
-                                              8.0, // Spacing between rows
-                                          childAspectRatio:
-                                              1.5, // Adjust the ratio to match your button design
-                                        ),
-                                        itemCount: auditorium.screenings.length,
-                                        itemBuilder: (context, index) {
-                                          final screening =
-                                              auditorium.screenings[index];
-                                          return ScreeningButton(
-                                            screening: screening,
+                                          const SizedBox(width: 24),
+                                          TextButton(
                                             onPressed: () {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      SeatSelectionScreen(
-                                                          auditorium:
-                                                              auditorium,
-                                                          screening: screening),
+                                                      MovieDetailScreen(
+                                                          movie: movie),
                                                 ),
                                               );
                                             },
-                                          );
-                                        },
+                                            style: TextButton.styleFrom(
+                                              padding: EdgeInsets
+                                                  .zero, // Loại bỏ padding để trông giống liên kết hơn
+                                              minimumSize: const Size(0,
+                                                  0), // Loại bỏ kích thước tối thiểu
+                                              tapTargetSize: MaterialTapTargetSize
+                                                  .shrinkWrap, // Thu nhỏ vùng nhấn
+                                              visualDensity: VisualDensity
+                                                  .compact, // Giảm mật độ hiển thị
+                                              enableFeedback:
+                                                  false, // Tắt hiệu ứng khi nhấn
+                                            ),
+                                            child: const Text(
+                                              'Chi tiết',
+                                              style: TextStyle(
+                                                color: colorPrimary,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      if (auditorium != auditoriums.last)
-                                        const Divider(),
+                                      Text(
+                                        '${movie.categories.map((e) => e.name).join(", ")} | ${movie.language} | ${movie.duration} phút',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Image.network(
+                                              movie.imageUrl,
+                                              width: 100,
+                                              height: 100 * 1.5,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: GridView.builder(
+                                              shrinkWrap:
+                                                  true, // Ensures the GridView only takes up necessary space
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(), // Disable scrolling for this GridView
+                                              gridDelegate:
+                                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount:
+                                                    2, // Adjust this number based on your design
+                                                crossAxisSpacing:
+                                                    8.0, // Spacing between columns
+                                                mainAxisSpacing:
+                                                    8.0, // Spacing between rows
+                                                childAspectRatio:
+                                                    1.5, // Adjust the ratio to match your button design
+                                              ),
+                                              itemCount:
+                                                  movie.screenings.length,
+                                              itemBuilder: (context, index) {
+                                                final screening =
+                                                    movie.screenings[index];
+                                                return ScreeningButton(
+                                                  screening: screening,
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SeatSelectionScreen(
+                                                                auditorium: widget
+                                                                    .auditorium,
+                                                                screening:
+                                                                    screening),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      if (movie != movies.last) const Divider(),
                                     ],
                                   );
                                 }).toList(),
@@ -414,25 +324,5 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
         ],
       ),
     );
-  }
-
-  void _showProvinceSelectionScreen(BuildContext context) async {
-    final selectedProvince = await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return const FractionallySizedBox(
-          heightFactor: 0.8,
-          child: ProvinceSelectionScreen(),
-        );
-      },
-    );
-
-    if (selectedProvince != null) {
-      Provider.of<ProvinceProvider>(context, listen: false)
-          .setSelectedProvince(selectedProvince);
-      _fetchCinemas();
-    }
   }
 }

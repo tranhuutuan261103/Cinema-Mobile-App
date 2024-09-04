@@ -1,5 +1,6 @@
 // screening_service.dart
 import 'dart:convert';
+import 'package:cinema_mobile_app/models/movie.dart';
 import 'package:cinema_mobile_app/models/screening.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -38,20 +39,20 @@ class ScreeningService {
     }
   }
 
-  Future<List<Cinema>> getScreeningsByAuditoriumId({int? auditoriumId, int? provinceId = 1, DateTime? startDate}) async {
+  Future<List<Movie>> getScreeningsByAuditoriumId({int? auditoriumId, DateTime? startDate}) async {
     try {
       final ioClient = getUnsafeIOClient();
 
       startDate ??= DateTime.now();
 
-      final response = await ioClient.get(Uri.parse("$_baseUrl/auditorium/$auditoriumId?provinceId=$provinceId&startDate=${startDate.toIso8601String()}"), 
+      final response = await ioClient.get(Uri.parse("$_baseUrl/auditorium/$auditoriumId?startDate=${startDate.toIso8601String()}"), 
         headers: {
           "Accept": "application/json",
         }
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        return data.map((json) => Cinema.fromJson(json)).toList();
+        return data.map((json) => Movie.fromJson(json)).toList();
       } else {
         if (kDebugMode) {
           print("Failed to load cinemas: ${response.statusCode}");
