@@ -1,4 +1,5 @@
 import './category.dart';
+import './screening.dart';
 
 class Movie {
   final int id;
@@ -12,6 +13,7 @@ class Movie {
   final List<Category> categories;
   final DateTime releaseDate;
   final int duration;
+  final List<Screening> screenings;
 
   Movie({
     required this.id,
@@ -25,6 +27,7 @@ class Movie {
     required this.categories,
     required this.releaseDate,
     required this.duration,
+    required this.screenings,
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
@@ -39,17 +42,22 @@ class Movie {
     return Movie(
       id: json['id'],
       title: json['title'],
-      description: json['description'],
-      language: json['language'],
+      description: json['description'] ?? '',
+      language: json['language'] ?? '',
       imageUrl: posterImage,
-      director: json['director'],
-      actors: json['actors'],
+      director: json['director'] ?? '',
+      actors: json['actors'] ?? '',
       rating: (json['rating'] as num).toDouble(),
       categories: (json['categories'] as List<dynamic>)
           .map((category) => Category.fromJson(category))
           .toList(),
       releaseDate: DateTime.now(),
-      duration: (json['duration'] as num).toInt(),
+      duration: ((json['duration'] ?? 0) as num).toInt(),
+      screenings: json['screenings'] != null
+          ? (json['screenings'] as List)
+              .map((screening) => Screening.fromJson(screening))
+              .toList()
+          : [],
     );
   }
 
