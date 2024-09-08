@@ -1,3 +1,4 @@
+import 'package:cinema_mobile_app/models/province.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/colors.dart';
@@ -11,9 +12,15 @@ class ProvinceSelectionScreen extends StatefulWidget {
 }
 
 class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  List<Province> _provinces = [];
+
   @override
   void initState() {
     super.initState();
+    // Initialize the list with all provinces
+    _provinces = Provider.of<ProvinceProvider>(context, listen: false).provinces;
   }
 
   @override
@@ -25,15 +32,25 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Expanded(
+            Expanded(
               child: TextField(
-                decoration: InputDecoration(
+                controller: _searchController,
+                onChanged: (value) {
+                  // Update the state with filtered provinces
+                  setState(() {
+                    final allProvinces = Provider.of<ProvinceProvider>(context, listen: false).provinces;
+                    _provinces = allProvinces.where((province) {
+                      return province.name.toLowerCase().contains(value.toLowerCase());
+                    }).toList();
+                  });
+                },
+                decoration: const InputDecoration(
                   hintText: 'Nhập tên tỉnh/thành phố',
                   hintStyle: TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(horizontal: 16),
                 ),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
             TextButton(
@@ -65,7 +82,23 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
                 if (provinceProvider.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
-                  final provinces = provinceProvider.provinces;
+                  // If there are search results, use them; otherwise, use the original province list
+                  final provinces = _provinces.isNotEmpty || _searchController.text.isNotEmpty
+                      ? _provinces
+                      : provinceProvider.provinces;
+
+                  if (provinces.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Không tìm thấy tỉnh/thành phố',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+                  
                   return SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Container(
@@ -78,8 +111,7 @@ class _ProvinceSelectionScreenState extends State<ProvinceSelectionScreen> {
                         child: Column(
                           children: provinces.map((province) {
                             return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: InkWell(
                                 onTap: () {
                                   Navigator.pop(context, province);
