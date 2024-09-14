@@ -1,14 +1,15 @@
-import 'package:cinema_mobile_app/screens/stacks/screening_selection_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/colors.dart';
-import '../screens/province_selection_screen.dart';
-import '../widgets/cinema_button.dart';
-import '../widgets/not_found_container.dart';
-import '../providers/province_provider.dart';
-import '../models/cinema.dart';
-import '../services/cinema_service.dart';
+import '../../../constants/colors.dart';
+import '../../../widgets/cinema_button.dart';
+import '../../../widgets/not_found_container.dart';
+import '../../../providers/province_provider.dart';
+import '../../../models/cinema.dart';
+import '../../../services/cinema_service.dart';
+import '../../stacks/province_selection_screen.dart';
+import './stacks/screening_selection_screen.dart';
 
 class AuditoriumSelectionScreen extends StatefulWidget {
   final String title;

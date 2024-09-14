@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants/colors.dart';
-import '../../models/comment.dart';
-import '../../models/movie.dart';
-import '../../providers/auth_provider.dart';
-import '../../services/comment_service.dart';
-import '../../utils/datetime_helper.dart';
-import '../../widgets/comment_container.dart';
+import '../../../../constants/colors.dart';
+import '../../../../models/comment.dart';
+import '../../../../models/movie.dart';
+import '../../../../providers/auth_provider.dart';
+import '../../../../services/comment_service.dart';
+import '../../../../utils/datetime_helper.dart';
+import '../../../../widgets/comment_container.dart';
 
 class CommentDetailScreen extends StatefulWidget {
   final Comment comment;

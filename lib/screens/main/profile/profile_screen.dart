@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:cinema_mobile_app/models/account.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../constants/colors.dart';
-import '../providers/auth_provider.dart';
-import '../services/account_service.dart';
-import '../widgets/not_found_container.dart';
+import '../../../models/account.dart';
+import '../../../constants/colors.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../services/account_service.dart';
+import '../../../widgets/not_found_container.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

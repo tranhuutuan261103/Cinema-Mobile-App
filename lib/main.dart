@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import './routes/app_routes.dart';
-import './screens/province_selection_screen.dart';
-import '../screens/settings_screen.dart';
+import './screens/stacks/province_selection_screen.dart';
+import '../screens/stacks/settings_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import './providers/province_provider.dart';

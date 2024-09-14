@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../constants/colors.dart';
-import '../models/movie.dart';
-import '../widgets/movie_poster.dart';
-import '../widgets/not_found_container.dart';
-import '../services/movie_service.dart';
+import '../../../constants/colors.dart';
+import '../../../models/movie.dart';
+import '../../../widgets/movie_poster.dart';
+import '../../../widgets/not_found_container.dart';
+import '../../../services/movie_service.dart';
+import '../home/stacks/movie_detail_screen.dart';
 
 class HomePage extends StatefulWidget {
   // ignore: use_super_parameters
@@ -84,8 +85,19 @@ class _MyHomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: movies.map((movie) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: MoviePoster(movie: movie),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: MoviePoster(
+                                movie: movie,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          MovieDetailScreen(movie: movie),
+                                    ),
+                                  );
+                                }),
                           );
                         }).toList(),
                       ),

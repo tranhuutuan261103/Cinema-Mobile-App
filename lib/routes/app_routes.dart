@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import "../screens/home.dart";
-import '../screens/product_selection_screen.dart';
-import "../screens/profile_screen.dart";
-import '../screens/auditorium_selection_screen.dart';
+import "../screens/main/home/home.dart";
+import '../screens/main/product/product_selection_screen.dart';
+import "../screens/main/profile/profile_screen.dart";
+import '../screens/main/auditorium/auditorium_selection_screen.dart';
 import '../constants/colors.dart';
 
 class AppRoutes extends StatefulWidget {
