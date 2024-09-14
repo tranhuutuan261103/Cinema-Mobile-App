@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 import '../models/movie.dart';
-import '../screens/movie_detail_screen.dart';
 
 class MoviePoster extends StatelessWidget {
-  const MoviePoster({super.key, required this.movie});
+  const MoviePoster({super.key, required this.movie, required this.onTap});
 
   final Movie movie;
+  final Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // Navigate to the detail screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MovieDetailScreen(movie: movie),
-          ),
-        );
-      },
+      onTap: onTap,
       splashColor: Colors.transparent, // Add a splash color for feedback
       highlightColor: Colors.transparent, // Ensure the highlight color is transparent if needed
       child: Column(

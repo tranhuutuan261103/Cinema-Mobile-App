@@ -8,7 +8,7 @@ import '../../models/movie.dart';
 import '../../widgets/cinema_button.dart';
 import '../../widgets/not_found_container.dart';
 import './seat_selection_screen.dart';
-import '../../screens/province_selection_screen.dart';
+import './province_selection_screen.dart';
 import '../../providers/province_provider.dart';
 import '../../services/screening_service.dart';
 import '../../utils/datetime_helper.dart';

@@ -1,8 +1,9 @@
-import 'package:cinema_mobile_app/models/province.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../constants/colors.dart';
-import '../providers/province_provider.dart';
+
+import '../../models/province.dart';
+import '../../constants/colors.dart';
+import '../../providers/province_provider.dart';
 
 class ProvinceSelectionScreen extends StatefulWidget {
   const ProvinceSelectionScreen({super.key});
