@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import './screens/main/main_page.dart';
+
 import './routes/app_routes.dart';
 import './screens/stacks/province_selection_screen.dart';
 import '../screens/stacks/settings_screen.dart';
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const AppRoutes(),
+        '/': (context) => const MainPage(),
         '/city': (context) => const ProvinceSelectionScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/login': (context) => const LoginScreen(),
