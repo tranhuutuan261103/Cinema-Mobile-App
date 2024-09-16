@@ -5,7 +5,7 @@ import '../../../models/movie.dart';
 import '../../../widgets/movie_poster.dart';
 import '../../../widgets/not_found_container.dart';
 import '../../../services/movie_service.dart';
-import '../home/stacks/movie_detail_screen.dart';
+import '../../../routes/routes.dart';
 
 class HomePage extends StatefulWidget {
   // ignore: use_super_parameters
@@ -90,13 +90,9 @@ class _MyHomePageState extends State<HomePage> {
                             child: MoviePoster(
                                 movie: movie,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          MovieDetailScreen(movie: movie),
-                                    ),
-                                  );
+                                  Navigator.pushNamed(
+                                      context, Routes.movieDetail,
+                                      arguments: movie);
                                 }),
                           );
                         }).toList(),

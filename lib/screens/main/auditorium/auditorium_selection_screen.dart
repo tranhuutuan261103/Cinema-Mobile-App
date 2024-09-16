@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +8,7 @@ import '../../../providers/province_provider.dart';
 import '../../../models/cinema.dart';
 import '../../../services/cinema_service.dart';
 import '../../stacks/province_selection_screen.dart';
-import './stacks/screening_selection_screen.dart';
+import '../../../routes/routes.dart';
 
 class AuditoriumSelectionScreen extends StatefulWidget {
   final String title;
@@ -230,13 +229,9 @@ class _AuditoriumSelectionScreenState extends State<AuditoriumSelectionScreen> {
                                 children: auditoriums.map((auditorium) {
                               return InkWell(
                                 onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ScreeningSelectionScreen(
-                                                auditorium: auditorium),
-                                      ));
+                                  Navigator.pushNamed(
+                                      context, Routes.screeningSelectionScreen,
+                                      arguments: auditorium);
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
