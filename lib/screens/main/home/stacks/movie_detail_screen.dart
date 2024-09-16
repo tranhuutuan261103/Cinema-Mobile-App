@@ -7,7 +7,7 @@ import '../../../../models/movie.dart';
 import '../../../../models/comment.dart';
 import '../../../../models/rating_count.dart';
 import '../../../stacks/booking_screen.dart';
-import './comment_detail_screen.dart';
+import '../../../../routes/routes.dart';
 import '../../../../widgets/comment_container.dart';
 import '../../../../widgets/rating_movie_info.dart';
 import '../../../../providers/auth_provider.dart';
@@ -372,12 +372,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               handleLikeComment(commentId);
                             },
                             onReply: () {
-                              Navigator.push(
+                              Navigator.pushNamed(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => CommentDetailScreen(
-                                      comment: comment, movie: widget.movie),
-                                ),
+                                Routes.commentDetailScreen,
+                                arguments: [comment, widget.movie],
                               );
                             }))
                         .toList(),
