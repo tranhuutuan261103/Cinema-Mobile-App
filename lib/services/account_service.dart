@@ -27,7 +27,7 @@ class AccountService {
         throw Exception("Failed to get profile: ${response.statusCode}");
       }
     } catch (e) {
-      throw Exception("Failed to get profile: $e");
+      return Account.empty();
     }
   }
 
