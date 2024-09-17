@@ -28,4 +28,11 @@ class Account {
       avatarUrl: json['avatarUrl'],
     );
   }
+
+  // default constructor
+  Account.empty()
+      : username = 'User',
+        email = '',
+        firstName = 'User',
+        lastName = '';
 }

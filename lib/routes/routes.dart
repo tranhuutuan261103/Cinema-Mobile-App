@@ -10,16 +10,21 @@ import '../screens/main/home/stacks/comment_detail_screen.dart';
 
 import '../screens/main/auditorium/stacks/screening_selection_screen.dart';
 
+import '../screens/stacks/settings_screen.dart';
+
 import '../screens/auth/login_screen.dart';
 
 class Routes {
   static const String root = "/";
   static const String home = "home";
-  static const String login = "login";
   static const String movieDetail = "movieDetail";
   static const String commentDetailScreen = "commentDetailScreen";
   
   static const String screeningSelectionScreen = "screeningSelectionScreen";
+
+  static const String settingsScreen = "settings";
+
+  static const String login = "login";
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -49,6 +54,11 @@ class Routes {
       case screeningSelectionScreen:
         return MaterialPageRoute(
           builder: (context) => ScreeningSelectionScreen(auditorium: settings.arguments as Auditorium,),
+        );
+
+      case settingsScreen:
+        return MaterialPageRoute(
+          builder: (context) => const SettingsScreen(),
         );
 
       case login:

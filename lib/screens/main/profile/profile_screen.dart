@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../routes/routes.dart';
 import '../../../models/account.dart';
 import '../../../constants/colors.dart';
 import '../../../providers/auth_provider.dart';
@@ -18,7 +19,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<Account>? _accountFuture;
+  late Future<Account> _accountFuture;
 
   Future<void> _pickImage() async {
     final image = await ImagePicker().pickImage(
@@ -82,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
                 onPressed: () {
                   // Push the setting screen
-                  Navigator.of(context).pushNamed('/settings');
+                  Navigator.of(context).pushNamed(Routes.settingsScreen);
                 },
                 icon: const Icon(Icons.settings, color: Colors.white)),
           ],
@@ -103,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/login');
+                      Navigator.of(context).pushNamed(Routes.login);
                     },
                     child: const Text('Đăng nhập'),
                   ),
@@ -158,6 +159,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: FutureBuilder<Account>(
                     future: _accountFuture,
                     builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return const Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        );
+                      }
+
                       return snapshot.hasData
                           ? Center(
                               child: GestureDetector(
@@ -213,6 +223,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: FutureBuilder<Account>(
                     future: _accountFuture,
                     builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return const Text(
+                          "Error",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+
                       return Text(
                         snapshot.hasData ? snapshot.data!.firstName : "",
                         style: const TextStyle(
