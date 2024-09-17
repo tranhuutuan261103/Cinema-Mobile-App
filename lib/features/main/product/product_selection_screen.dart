@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants/colors.dart';
-import '../../../models/product_combo.dart';
-import '../../../services/product_combo_service.dart';
-import '../../../components/date_selection_bottom_sheet.dart';
-import '../../../widgets/show_bottom_sheet_button.dart';
-import '../../../utils/datetime_helper.dart';
+import '../../../common/constants/colors.dart';
+import '../../../common/models/product_combo.dart';
+import '../../../common/services/product_combo_service.dart';
+import '../../../common/components/date_selection_bottom_sheet.dart';
+import '../../../common/widgets/show_bottom_sheet_button.dart';
+import '../../../common/utils/datetime_helper.dart';
 
 class ProductSelectionScreen extends StatefulWidget {
   const ProductSelectionScreen({super.key});

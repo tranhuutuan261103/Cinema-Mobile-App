@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import './screens/main/main_page.dart';
+import './features/main/main_page.dart';
 
-import './routes/routes.dart';
-import './providers/province_provider.dart';
-import './providers/auth_provider.dart';
+import '../common/routes/routes.dart';
+import '../common/providers/province_provider.dart';
+import '../common/providers/auth_provider.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");

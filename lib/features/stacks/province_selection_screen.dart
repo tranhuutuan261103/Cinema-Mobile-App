@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/province.dart';
-import '../../constants/colors.dart';
-import '../../providers/province_provider.dart';
+import '../../common/providers/province_provider.dart';
+
+import '../../common/models/province.dart';
+import '../../common/constants/colors.dart';
 
 class ProvinceSelectionScreen extends StatefulWidget {
   const ProvinceSelectionScreen({super.key});

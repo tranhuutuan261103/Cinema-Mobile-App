@@ -1,10 +1,10 @@
 // screening_service.dart
 import 'dart:convert';
-import 'package:cinema_mobile_app/models/movie.dart';
-import 'package:cinema_mobile_app/models/screening.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../models/movie.dart';
+import '../models/screening.dart';
 import '../models/cinema.dart';
 import '../utils/unsafe_http_helper.dart';  // Update with the correct path
 

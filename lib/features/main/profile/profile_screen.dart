@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../routes/routes.dart';
-import '../../../models/account.dart';
-import '../../../constants/colors.dart';
-import '../../../providers/auth_provider.dart';
-import '../../../services/account_service.dart';
-import '../../../widgets/not_found_container.dart';
+import '../../../common/providers/auth_provider.dart';
+
+import '../../../common/routes/routes.dart';
+import '../../../common/models/account.dart';
+import '../../../common/constants/colors.dart';
+import '../../../common/services/account_service.dart';
+import '../../../common/widgets/not_found_container.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants/colors.dart';
-import '../../../models/movie.dart';
-import '../../../widgets/movie_poster.dart';
-import '../../../widgets/not_found_container.dart';
-import '../../../services/movie_service.dart';
-import '../../../routes/routes.dart';
+import '../../../../common/constants/colors.dart';
+import '../../../../common/models/movie.dart';
+import '../../../../common/widgets/movie_poster.dart';
+import '../../../../common/widgets/not_found_container.dart';
+import '../../../../common/services/movie_service.dart';
+import '../../../../common/routes/routes.dart';
 
 class HomePage extends StatefulWidget {
   // ignore: use_super_parameters

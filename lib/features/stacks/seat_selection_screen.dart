@@ -1,17 +1,17 @@
-import 'package:cinema_mobile_app/models/auditorium.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants/colors.dart';
-import '../../models/screening.dart';
-import '../../models/seat.dart';
-import '../../models/person_type.dart';
-import '../../services/screening_service.dart';
-import '../../utils/datetime_helper.dart';
+import '../../common/constants/colors.dart';
+import '../../common/models/auditorium.dart';
+import '../../common/models/screening.dart';
+import '../../common/models/seat.dart';
+import '../../common/models/person_type.dart';
+import '../../common/services/screening_service.dart';
+import '../../common/utils/datetime_helper.dart';
 
-import '../../widgets/seats/seat_normal.dart';
-import '../../widgets/seats/seat_vip.dart';
-import '../../widgets/seats/seat_booked.dart';
-import '../../widgets/seats/seat_booking.dart';
+import '../../common/widgets/seats/seat_normal.dart';
+import '../../common/widgets/seats/seat_vip.dart';
+import '../../common/widgets/seats/seat_booked.dart';
+import '../../common/widgets/seats/seat_booking.dart';
 
 class SeatSelectionScreen extends StatefulWidget {
   final Auditorium auditorium;
