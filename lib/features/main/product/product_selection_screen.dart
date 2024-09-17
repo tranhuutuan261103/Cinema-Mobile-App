@@ -1,6 +1,8 @@
+import 'package:cinema_mobile_app/common/models/auditorium.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/constants/colors.dart';
+import '../../../common/routes/routes.dart';
 import '../../../common/models/product_combo.dart';
 import '../../../common/services/product_combo_service.dart';
 import '../../../common/components/date_selection_bottom_sheet.dart';
@@ -17,6 +19,8 @@ class ProductSelectionScreen extends StatefulWidget {
 class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   late Future<List<ProductCombo>> _productCombosFuture;
   DateTime _selectedDate = DateTime.now();
+
+  Auditorium? auditoriumSelected;
 
   @override
   void initState() {
@@ -63,9 +67,17 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                       children: [
                         ShowBottomSheetButton(
                           title: "Nhận tại",
-                          value: "CGV Vimcom Đà Nẵng",
+                          value: auditoriumSelected?.name ?? "Chọn rạp chiếu",
                           icon: Icons.arrow_forward_ios,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(Routes.productAuditoriumSelection).then((result) {
+                              if (result is Auditorium) {
+                                setState(() {
+                                  auditoriumSelected = result;
+                                });
+                              }
+                            });
+                          },
                         ),
                         const SizedBox(height: 16.0),
                         ShowBottomSheetButton(

@@ -10,6 +10,8 @@ import '../../features/main/home/stacks/comment_detail_screen.dart';
 
 import '../../features/main/auditorium/stacks/screening_selection_screen.dart';
 
+import '../../features/main/product/stacks/product_auditorium_selection.dart';
+
 import '../../features/stacks/settings_screen.dart';
 
 import '../../features/auth/login_screen.dart';
@@ -21,6 +23,8 @@ class Routes {
   static const String commentDetailScreen = "commentDetailScreen";
   
   static const String screeningSelectionScreen = "screeningSelectionScreen";
+
+  static const String productAuditoriumSelection = "productAuditoriumSelection";
 
   static const String settingsScreen = "settings";
 
@@ -54,6 +58,12 @@ class Routes {
       case screeningSelectionScreen:
         return MaterialPageRoute(
           builder: (context) => ScreeningSelectionScreen(auditorium: settings.arguments as Auditorium,),
+        );
+
+      // Product page
+      case productAuditoriumSelection:
+        return MaterialPageRoute(
+          builder: (context) => const ProductAuditoriumSelection(),
         );
 
       case settingsScreen:

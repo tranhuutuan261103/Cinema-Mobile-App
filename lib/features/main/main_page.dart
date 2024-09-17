@@ -33,7 +33,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -41,6 +40,7 @@ class _MainPageState extends State<MainPage> {
           Center(
             child: Container(
               height: double.infinity,
+              padding: const EdgeInsets.only(bottom: 80),
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   colors: [
