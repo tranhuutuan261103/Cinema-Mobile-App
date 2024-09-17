@@ -4,15 +4,15 @@ import '../models/movie.dart';
 import '../models/auditorium.dart';
 import '../models/comment.dart';
 
-import '../screens/main/main_page.dart';
-import '../screens/main/home/stacks/movie_detail_screen.dart';
-import '../screens/main/home/stacks/comment_detail_screen.dart';
+import '../../features/main/main_page.dart';
+import '../../features/main/home/stacks/movie_detail_screen.dart';
+import '../../features/main/home/stacks/comment_detail_screen.dart';
 
-import '../screens/main/auditorium/stacks/screening_selection_screen.dart';
+import '../../features/main/auditorium/stacks/screening_selection_screen.dart';
 
-import '../screens/stacks/settings_screen.dart';
+import '../../features/stacks/settings_screen.dart';
 
-import '../screens/auth/login_screen.dart';
+import '../../features/auth/login_screen.dart';
 
 class Routes {
   static const String root = "/";

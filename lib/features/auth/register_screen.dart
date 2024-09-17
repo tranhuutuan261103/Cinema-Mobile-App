@@ -1,9 +1,10 @@
-import 'package:cinema_mobile_app/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants/colors.dart';
-import '../../widgets/text_field_custom.dart';
+import '../../common/providers/auth_provider.dart';
+
+import '../../common/constants/colors.dart';
+import '../../common/widgets/text_field_custom.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {

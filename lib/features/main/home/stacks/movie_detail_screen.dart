@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../constants/colors.dart';
-import '../../../../models/movie.dart';
-import '../../../../models/comment.dart';
-import '../../../../models/rating_count.dart';
+import '../../../../../common/providers/auth_provider.dart';
+
+import '../../../../../common/constants/colors.dart';
+import '../../../../../common/models/movie.dart';
+import '../../../../../common/models/comment.dart';
+import '../../../../../common/models/rating_count.dart';
 import '../../../stacks/booking_screen.dart';
-import '../../../../routes/routes.dart';
-import '../../../../widgets/comment_container.dart';
-import '../../../../widgets/rating_movie_info.dart';
-import '../../../../providers/auth_provider.dart';
-import '../../../../services/comment_service.dart';
-import '../../../../services/rating_service.dart';
+import '../../../../../common/routes/routes.dart';
+import '../../../../../common/widgets/comment_container.dart';
+import '../../../../../common/widgets/rating_movie_info.dart';
+import '../../../../../common/services/comment_service.dart';
+import '../../../../../common/services/rating_service.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/colors.dart';
+import '../../common/constants/colors.dart';
 
 import './home/home.dart';
 import './auditorium/auditorium_selection_screen.dart';

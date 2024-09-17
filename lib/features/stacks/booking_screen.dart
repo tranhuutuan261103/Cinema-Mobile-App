@@ -1,17 +1,18 @@
-import 'package:cinema_mobile_app/widgets/screening_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants/colors.dart';
-import '../../models/cinema.dart';
-import '../../models/movie.dart';
-import '../../widgets/cinema_button.dart';
-import '../../widgets/not_found_container.dart';
+import '../../common/providers/province_provider.dart';
+
+import '../../common/constants/colors.dart';
+import '../../common/models/cinema.dart';
+import '../../common/models/movie.dart';
+import '../../common/widgets/cinema_button.dart';
+import '../../common/widgets/not_found_container.dart';
+import '../../common/widgets/screening_button.dart';
 import './seat_selection_screen.dart';
 import './province_selection_screen.dart';
-import '../../providers/province_provider.dart';
-import '../../services/screening_service.dart';
-import '../../utils/datetime_helper.dart';
+import '../../common/services/screening_service.dart';
+import '../../common/utils/datetime_helper.dart';
 
 class BookingScreen extends StatefulWidget {
   final Movie movie;

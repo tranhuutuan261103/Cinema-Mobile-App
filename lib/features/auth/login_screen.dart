@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants/colors.dart';
-import '../../providers/auth_provider.dart';
-import '../../widgets/text_field_custom.dart';
+import '../../common/constants/colors.dart';
+import '../../common/providers/auth_provider.dart';
+import '../../common/widgets/text_field_custom.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
