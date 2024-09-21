@@ -8,7 +8,6 @@ import '../../../../../common/constants/colors.dart';
 import '../../../../../common/models/movie.dart';
 import '../../../../../common/models/comment.dart';
 import '../../../../../common/models/rating_count.dart';
-import '../../../stacks/booking_screen.dart';
 import '../../../../../common/routes/routes.dart';
 import '../../../../../common/widgets/comment_container.dart';
 import '../../../../../common/widgets/rating_movie_info.dart';
@@ -394,11 +393,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       child: ElevatedButton(
         onPressed: () {
           // Navigate to the booking screen
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BookingScreen(movie: widget.movie),
-              ));
+          Navigator.pushNamed(context, Routes.screeningSelectionByMovie,
+              arguments: widget.movie);
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
