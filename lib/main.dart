@@ -5,6 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import './features/main/main_page.dart';
 
 import '../common/routes/routes.dart';
+
+import '../common/providers/invoice_provider.dart';
 import '../common/providers/province_provider.dart';
 import '../common/providers/auth_provider.dart';
 
@@ -13,6 +15,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => InvoiceProvider()),
         ChangeNotifierProvider(create: (context) => ProvinceProvider()),
         ChangeNotifierProvider(create: (context) => AuthProvider()),
       ],
