@@ -9,6 +9,7 @@ import '../../common/models/screening.dart';
 import '../../common/models/seat.dart';
 import '../../common/models/person_type.dart';
 import '../../common/services/screening_service.dart';
+import '../../common/routes/routes.dart';
 import '../../common/utils/datetime_helper.dart';
 
 import '../../common/widgets/seats/seat_normal.dart';
@@ -74,7 +75,8 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   }
 
   void _handleSeatSelection(Seat seat) {
-    final invoiceProvider = Provider.of<InvoiceProvider>(context, listen: false);
+    final invoiceProvider =
+        Provider.of<InvoiceProvider>(context, listen: false);
     if (seat.seatStatus.isAvailable) {
       if (invoiceProvider.getSeats.contains(seat)) {
         invoiceProvider.removeSeat(seat);
@@ -317,7 +319,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                           ),
                           const Spacer(),
                           Text(
-                            '$_totalPriceđ',
+                            '$_totalPrice đ',
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -329,7 +331,10 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                       const Spacer(),
                       ElevatedButton(
                         onPressed: () {
-                          // Book ticket action
+                          Navigator.pushNamed(
+                            context,
+                            Routes.productSelection,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
