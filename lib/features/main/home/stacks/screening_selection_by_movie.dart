@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/providers/province_provider.dart';
+import '../../../../common/providers/province_provider.dart';
 
-import '../../common/constants/colors.dart';
-import '../../common/models/cinema.dart';
-import '../../common/models/movie.dart';
-import '../../common/widgets/cinema_button.dart';
-import '../../common/widgets/not_found_container.dart';
-import '../../common/widgets/screening_button.dart';
-import './seat_selection_screen.dart';
-import './province_selection_screen.dart';
-import '../../common/services/screening_service.dart';
-import '../../common/utils/datetime_helper.dart';
+import '../../../../common/constants/colors.dart';
+import '../../../../common/models/cinema.dart';
+import '../../../../common/models/movie.dart';
+import '../../../../common/services/screening_service.dart';
+import '../../../../common/routes/routes.dart';
+import '../../../../common/utils/datetime_helper.dart';
+import '../../../../common/widgets/cinema_button.dart';
+import '../../../../common/widgets/not_found_container.dart';
+import '../../../../common/widgets/screening_button.dart';
 
-class BookingScreen extends StatefulWidget {
+import '../../../stacks/province_selection_screen.dart';
+
+class ScreeningSelectionByMovie extends StatefulWidget {
   final Movie movie;
-  const BookingScreen({super.key, required this.movie});
+  const ScreeningSelectionByMovie({super.key, required this.movie});
 
   @override
-  State<BookingScreen> createState() => _BookingScreenState();
+  State<ScreeningSelectionByMovie> createState() => _ScreeningSelectionByMovieState();
 }
 
-class _BookingScreenState extends State<BookingScreen> {
+class _ScreeningSelectionByMovieState extends State<ScreeningSelectionByMovie> {
   late final List<DateTime> _days;
   DateTime _selectedDate = DateTime.now();
 
@@ -380,15 +381,13 @@ class _BookingScreenState extends State<BookingScreen> {
                                           return ScreeningButton(
                                             screening: screening,
                                             onPressed: () {
-                                              Navigator.push(
+                                              Navigator.pushNamed(
                                                 context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SeatSelectionScreen(
-                                                          auditorium:
-                                                              auditorium,
-                                                          screening: screening),
-                                                ),
+                                                Routes.seatSelectionScreen,
+                                                arguments: [
+                                                  auditorium,
+                                                  screening,
+                                                ],
                                               );
                                             },
                                           );

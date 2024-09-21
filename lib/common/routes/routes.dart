@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../models/movie.dart';
 import '../models/auditorium.dart';
+import '../models/screening.dart';
 import '../models/comment.dart';
 
 import '../../features/main/main_page.dart';
 import '../../features/main/home/stacks/movie_detail_screen.dart';
 import '../../features/main/home/stacks/comment_detail_screen.dart';
+import '../../features/main/home/stacks/screening_selection_by_movie.dart';
 
 import '../../features/main/auditorium/stacks/screening_selection_screen.dart';
 
 import '../../features/main/product/stacks/product_auditorium_selection.dart';
+
+// Booking
+import '../../features/booking/seat_selection_screen.dart';
 
 import '../../features/stacks/settings_screen.dart';
 
@@ -18,13 +23,18 @@ import '../../features/auth/login_screen.dart';
 
 class Routes {
   static const String root = "/";
+
   static const String home = "home";
   static const String movieDetail = "movieDetail";
   static const String commentDetailScreen = "commentDetailScreen";
-  
+  static const String screeningSelectionByMovie = "screeningSelectionByMovie";
+
   static const String screeningSelectionScreen = "screeningSelectionScreen";
 
   static const String productAuditoriumSelection = "productAuditoriumSelection";
+
+  // Booking
+  static const String seatSelectionScreen = "seatSelectionScreen";
 
   static const String settingsScreen = "settings";
 
@@ -44,7 +54,9 @@ class Routes {
 
       case movieDetail:
         return MaterialPageRoute(
-          builder: (context) => MovieDetailScreen(movie: settings.arguments as Movie,),
+          builder: (context) => MovieDetailScreen(
+            movie: settings.arguments as Movie,
+          ),
         );
 
       case commentDetailScreen:
@@ -55,15 +67,33 @@ class Routes {
           ),
         );
 
+      case screeningSelectionByMovie:
+        return MaterialPageRoute(
+          builder: (context) => ScreeningSelectionByMovie(
+            movie: settings.arguments as Movie,
+          ),
+        );
+
       case screeningSelectionScreen:
         return MaterialPageRoute(
-          builder: (context) => ScreeningSelectionScreen(auditorium: settings.arguments as Auditorium,),
+          builder: (context) => ScreeningSelectionScreen(
+            auditorium: settings.arguments as Auditorium,
+          ),
         );
 
       // Product page
       case productAuditoriumSelection:
         return MaterialPageRoute(
           builder: (context) => const ProductAuditoriumSelection(),
+        );
+
+      // Booking
+      case seatSelectionScreen:
+        return MaterialPageRoute(
+          builder: (context) => SeatSelectionScreen(
+            auditorium: (settings.arguments as List)[0] as Auditorium,
+            screening: (settings.arguments as List)[1] as Screening,
+          ),
         );
 
       case settingsScreen:

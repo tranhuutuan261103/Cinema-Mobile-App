@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
-
 import '../../../../common/constants/colors.dart';
 import '../../../../common/models/movie.dart';
 import '../../../../common/models/auditorium.dart';
+import '../../../../common/services/screening_service.dart';
+import '../../../../common/routes/routes.dart';
+import '../../../../common/utils/datetime_helper.dart';
 import '../../../../common/widgets/screening_button.dart';
 import '../../../../common/widgets/not_found_container.dart';
-import '../../../stacks/seat_selection_screen.dart';
-import '../../../../common/services/screening_service.dart';
-import '../../../../common/utils/datetime_helper.dart';
 import '../../../main/home/stacks/movie_detail_screen.dart';
 
 class ScreeningSelectionScreen extends StatefulWidget {
@@ -286,16 +285,14 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
                                                 return ScreeningButton(
                                                   screening: screening,
                                                   onPressed: () {
-                                                    Navigator.push(
+                                                    Navigator.pushNamed(
                                                       context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            SeatSelectionScreen(
-                                                                auditorium: widget
-                                                                    .auditorium,
-                                                                screening:
-                                                                    screening),
-                                                      ),
+                                                      Routes
+                                                          .seatSelectionScreen,
+                                                      arguments: [
+                                                        widget.auditorium,
+                                                        screening,
+                                                      ],
                                                     );
                                                   },
                                                 );
