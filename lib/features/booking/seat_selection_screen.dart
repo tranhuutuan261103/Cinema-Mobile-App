@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../common/providers/invoice_provider.dart';
 
 import '../../common/constants/colors.dart';
 import '../../common/models/auditorium.dart';
@@ -20,7 +23,8 @@ class SeatSelectionScreen extends StatefulWidget {
   final double seatSize = 30.0;
   final double spacing = 10.0; // Khoảng cách giữa các ghế
 
-  const SeatSelectionScreen({super.key, required this.auditorium, required this.screening});
+  const SeatSelectionScreen(
+      {super.key, required this.auditorium, required this.screening});
 
   @override
   State<SeatSelectionScreen> createState() => _SeatSelectionScreenState();
@@ -28,7 +32,6 @@ class SeatSelectionScreen extends StatefulWidget {
 
 class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   late Future<Screening> _futureScreening;
-  final List<Seat> _selectedSeats = [];
   final List<PersonType> _personTypes = [
     PersonType(id: 1, name: 'Người lớn'),
     PersonType(id: 2, name: 'Trẻ em'),
@@ -40,6 +43,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   void initState() {
     super.initState();
     _futureScreening = fetchScreening();
+    Provider.of<InvoiceProvider>(context, listen: false).clear();
   }
 
   @override
@@ -52,7 +56,6 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
   @override
   void dispose() {
-    _selectedSeats.clear();
     super.dispose();
   }
 
@@ -71,17 +74,19 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   }
 
   void _handleSeatSelection(Seat seat) {
-    setState(() {
-      if (_selectedSeats.contains(seat)) {
-        _selectedSeats.remove(seat);
-      } else if (seat.seatStatus.isAvailable) {
-        _selectedSeats.add(seat);
+    final invoiceProvider = Provider.of<InvoiceProvider>(context, listen: false);
+    if (seat.seatStatus.isAvailable) {
+      if (invoiceProvider.getSeats.contains(seat)) {
+        invoiceProvider.removeSeat(seat);
+      } else {
+        invoiceProvider.addSeat(seat);
       }
-    });
+    }
   }
 
   double get _totalPrice {
-    return _selectedSeats.fold(
+    List<Seat> seats = Provider.of<InvoiceProvider>(context).getSeats;
+    return seats.fold(
         0,
         (previousValue, seat) =>
             previousValue +
@@ -93,6 +98,8 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedSeats = Provider.of<InvoiceProvider>(context).getSeats;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorPrimary,
@@ -158,7 +165,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                                     onTap: () {
                                       _handleSeatSelection(seat);
                                     },
-                                    child: _selectedSeats.contains(seat)
+                                    child: selectedSeats.contains(seat)
                                         ? SeatBooking(
                                             seat: seat,
                                             seatSize: widget.seatSize)
