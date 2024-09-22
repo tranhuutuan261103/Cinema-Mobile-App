@@ -1,3 +1,4 @@
+import '../models/cinema.dart';
 import '../models/screening.dart';
 
 class Auditorium {
@@ -6,6 +7,7 @@ class Auditorium {
   final String address;
   final double longitude;
   final double latitude;
+  final Cinema? cinema;
   List<Screening> screenings;
 
   Auditorium({
@@ -15,6 +17,7 @@ class Auditorium {
     this.longitude = 0.0,
     this.latitude = 0.0,
     this.screenings = const [],
+    required this.cinema,
   });
 
   factory Auditorium.fromJson(Map<String, dynamic> json) {
@@ -27,6 +30,7 @@ class Auditorium {
       screenings: (json['screenings'] as List<dynamic>)
           .map((screening) => Screening.fromJson(screening))
           .toList(),
+      cinema: json['cinema'] != null ? Cinema.fromJson(json['cinema']) : null,
     );
   }
 }

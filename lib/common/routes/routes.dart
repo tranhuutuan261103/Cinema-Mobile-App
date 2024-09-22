@@ -17,6 +17,7 @@ import '../../features/main/product/stacks/product_auditorium_selection.dart';
 // Booking
 import '../../features/booking/seat_selection_screen.dart';
 import '../../features/booking/product_selection.dart';
+import '../../features/booking/payment_info.dart';
 
 import '../../features/stacks/settings_screen.dart';
 
@@ -37,6 +38,7 @@ class Routes {
   // Booking
   static const String seatSelectionScreen = "seatSelectionScreen";
   static const String productSelection = "productSelection";
+  static const String paymentInfo = "paymentInfo";
 
   static const String settingsScreen = "settings";
 
@@ -101,6 +103,11 @@ class Routes {
       case productSelection:
         return MaterialPageRoute(
           builder: (context) => const ProductSelection(),
+        );
+
+      case paymentInfo:
+        return MaterialPageRoute(
+          builder: (context) => const PaymentInfo(),
         );
 
       case settingsScreen:

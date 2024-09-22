@@ -6,6 +6,7 @@ import '../../common/providers/invoice_provider.dart';
 import '../../common/constants/colors.dart';
 import '../../common/models/product_combo.dart';
 import '../../common/services/product_combo_service.dart';
+import '../../common/routes/routes.dart';
 
 class ProductSelection extends StatefulWidget {
   const ProductSelection({super.key});
@@ -120,7 +121,9 @@ class _ProductSelectionState extends State<ProductSelection> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, Routes.paymentInfo);
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                   ),

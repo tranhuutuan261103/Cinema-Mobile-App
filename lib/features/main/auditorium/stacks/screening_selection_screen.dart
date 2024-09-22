@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../common/providers/invoice_provider.dart';
 
 import '../../../../common/constants/colors.dart';
 import '../../../../common/models/movie.dart';
 import '../../../../common/models/auditorium.dart';
+import '../../../../common/models/screening.dart';
 import '../../../../common/services/screening_service.dart';
 import '../../../../common/routes/routes.dart';
 import '../../../../common/utils/datetime_helper.dart';
@@ -284,7 +288,17 @@ class _ScreeningSelectionScreenState extends State<ScreeningSelectionScreen> {
                                                     movie.screenings[index];
                                                 return ScreeningButton(
                                                   screening: screening,
-                                                  onPressed: () {
+                                                  onPressed: () async {
+                                                    Screening
+                                                        selectedScreening =
+                                                        await ScreeningService()
+                                                            .getScreening(
+                                                                screening.id);
+                                                    Provider.of<InvoiceProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .setScreening(
+                                                            selectedScreening);
                                                     Navigator.pushNamed(
                                                       context,
                                                       Routes
