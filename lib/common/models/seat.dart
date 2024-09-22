@@ -34,4 +34,6 @@ class Seat {
   String toString() {
     return 'Seat{id: $id, row: $row, number: $number, seatStatus: $seatStatus, seatType: $seatType}';
   }
+
+  String get seatName => String.fromCharCode(65 + row) + number.toString();
 }
