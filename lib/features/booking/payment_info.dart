@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/providers/auth_provider.dart';
 import '../../common/providers/invoice_provider.dart';
 
 import '../../common/constants/colors.dart';
 import '../../common/utils/datetime_helper.dart';
+import '../../common/models/product_combo.dart';
+import '../../common/services/product_combo_service.dart';
 
 class PaymentInfo extends StatefulWidget {
   const PaymentInfo({super.key});
@@ -14,6 +17,14 @@ class PaymentInfo extends StatefulWidget {
 }
 
 class _PaymentInfoState extends State<PaymentInfo> {
+  late Future<List<ProductCombo>> futureProductCombos;
+
+  @override
+  void initState() {
+    super.initState();
+    futureProductCombos = ProductComboService().getProductCombos();
+  }
+
   @override
   Widget build(BuildContext context) {
     final invoiceProvider = Provider.of<InvoiceProvider>(context);
@@ -238,7 +249,78 @@ class _PaymentInfoState extends State<PaymentInfo> {
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      const SizedBox(height: 16),
+                      const Text("Combo bắp nước",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      const SizedBox(height: 8),
+                      FutureBuilder<List<ProductCombo>>(
+                          future: futureProductCombos,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: snapshot.data!
+                                      .map(
+                                        (productCombo) => Row(children: [
+                                          _buildProductCombo(productCombo),
+                                          if (productCombo !=
+                                              snapshot.data!.last)
+                                            const SizedBox(width: 16),
+                                        ]),
+                                      )
+                                      .toList(),
+                                ),
+                              );
+                            } else {
+                              return const SizedBox(
+                                width: double.infinity,
+                                height: 100,
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                          }),
+                      const SizedBox(height: 16),
+                      const Text("Thông tin khách hàng",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      const SizedBox(height: 8),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      '${Provider.of<AuthProvider>(context).user!.firstName} ${Provider.of<AuthProvider>(context).user!.lastName}',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  Text(Provider.of<AuthProvider>(context)
+                                      .user!
+                                      .email),
+                                ],
+                              ),
+                              const Icon(Icons.edit, color: colorPrimary),
+                            ],
+                          ))
                     ],
                   ),
                 ),
@@ -288,5 +370,88 @@ class _PaymentInfoState extends State<PaymentInfo> {
             )
           ],
         ));
+  }
+
+  Widget _buildProductCombo(ProductCombo productCombo) {
+    final invoiceProvider = Provider.of<InvoiceProvider>(context);
+
+    final quantity = invoiceProvider.getProductCombos
+        .firstWhere((element) => element.keys.first.id == productCombo.id,
+            orElse: () => {productCombo: 0})
+        .values
+        .first;
+
+    return Container(
+      width: 300,
+      height: 100,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              productCombo.imageUrl,
+              width: 70,
+              height: 70,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                productCombo.name,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${productCombo.price} đ',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: colorPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () =>
+                              invoiceProvider.removeProductCombo(productCombo),
+                          icon: const Icon(Icons.remove)),
+                      Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            quantity.toString(),
+                            style: const TextStyle(fontSize: 16),
+                          )),
+                      IconButton(
+                          onPressed: () =>
+                              invoiceProvider.addProductCombo(productCombo),
+                          icon: const Icon(Icons.add)),
+                    ],
+                  )
+                ],
+              )
+            ],
+          )
+        ],
+      ),
+    );
   }
 }

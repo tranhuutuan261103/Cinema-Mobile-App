@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/account.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   String token = "";
+  Account? user;
 
   bool get isAuthenticated => _isAuthenticated;
   String get getToken => token;
@@ -13,6 +15,13 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     _loadToken();
   }
+
+  void setUser(Account account) {
+    user = account;
+    notifyListeners();
+  }
+
+  get getUser => user;
 
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();

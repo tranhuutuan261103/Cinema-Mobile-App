@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/constants/colors.dart';
+
 import '../../common/providers/auth_provider.dart';
+
+import '../../common/constants/colors.dart';
+import '../../common/models/account.dart';
+import '../../common/services/account_service.dart';
 import '../../common/widgets/text_field_custom.dart';
 import 'register_screen.dart';
 
@@ -42,6 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
   if (!mounted) return;
 
     if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
+      String token = Provider.of<AuthProvider>(context, listen: false).getToken;
+      Account user = await AccountService().getProfile(token);
+      Provider.of<AuthProvider>(context, listen: false).setUser(user);
+
       Navigator.of(context).pop();
     }
 
