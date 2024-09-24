@@ -1,3 +1,4 @@
+import 'package:cinema_mobile_app/common/services/account_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,13 +22,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  get getUser => user;
+  // get user type Account
+  Account? get getUser => user;
 
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token') ?? "";
     if (token.isNotEmpty) {
       _isAuthenticated = true;
+
+      fetchUserData();
     }
     notifyListeners();
   }
@@ -70,6 +74,17 @@ class AuthProvider extends ChangeNotifier {
       _isAuthenticated = false;
     }
     notifyListeners();
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      user = await AccountService().getProfile(token);
+      notifyListeners();
+    } catch (e) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
+      debugPrint(e.toString());
+    }
   }
 
   void logout() async {

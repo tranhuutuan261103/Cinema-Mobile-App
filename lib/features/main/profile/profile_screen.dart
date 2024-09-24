@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../../common/providers/auth_provider.dart';
 
 import '../../../common/routes/routes.dart';
-import '../../../common/models/account.dart';
 import '../../../common/constants/colors.dart';
 import '../../../common/services/account_service.dart';
 import '../../../common/widgets/not_found_container.dart';
@@ -20,8 +19,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<Account> _accountFuture;
-
   Future<void> _pickImage() async {
     final image = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -36,29 +33,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchAccount();
-  }
-
-  void _fetchAccount() {
-    if (Provider.of<AuthProvider>(context, listen: false).isAuthenticated) {
-      final token = Provider.of<AuthProvider>(context, listen: false).getToken;
-      setState(() {
-        _accountFuture = AccountService().getProfile(token);
-      });
-    }
   }
 
   void _updateAvatar(File fileData) {
     final token = Provider.of<AuthProvider>(context, listen: false).getToken;
     AccountService().updateAvatar(token, fileData).then((account) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Avatar updated successfully'),
-        ),
-      );
-      setState(() {
-        _accountFuture = Future.value(account);
-      });
+      if (mounted) {
+        Provider.of<AuthProvider>(context, listen: false).setUser(account);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Avatar updated successfully'),
+          ),
+        );
+      }
     }).catchError(
       (error) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +103,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileContent(BuildContext context) {
-    _fetchAccount();
     return Column(
       children: [
         SizedBox(
@@ -153,41 +139,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
               left: MediaQuery.of(context).size.width / 2 - 40,
               child: Stack(children: [
                 Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: FutureBuilder<Account>(
-                    future: _accountFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return const Icon(
-                          Icons.error,
-                          color: Colors.red,
-                        );
-                      }
-
-                      return snapshot.hasData
-                          ? Center(
-                              child: GestureDetector(
-                                onTap: _pickImage,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(40),
-                                  child: Image.network(
-                                    snapshot.data!.avatarUrl ??
-                                        "https://assetsio.gnwcdn.com/Genshin-Impact-Furina-best-build%2C-Talent-and-Ascension-materials%2C-weapon%2C-and-team-cover.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
-                                    width: 80,
-                                    height: 80,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : const SizedBox();
-                    },
-                  ),
-                ),
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Image.network(
+                            Provider.of<AuthProvider>(context)
+                                    .getUser
+                                    ?.avatarUrl ??
+                                "https://assetsio.gnwcdn.com/Genshin-Impact-Furina-best-build%2C-Talent-and-Ascension-materials%2C-weapon%2C-and-team-cover.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
+                            width: 80,
+                            height: 80,
+                          ),
+                        ),
+                      ),
+                    )),
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -221,31 +192,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               left: 0,
               right: 0,
               child: Center(
-                child: FutureBuilder<Account>(
-                    future: _accountFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return const Text(
-                          "Error",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      }
-
-                      return Text(
-                        snapshot.hasData ? snapshot.data!.firstName : "",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      );
-                    }),
-              ),
+                  child: Text(
+                Provider.of<AuthProvider>(context).getUser?.firstName ?? "",
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
             ),
             Positioned(
               top: 70,
