@@ -12,6 +12,7 @@ import '../../common/services/screening_service.dart';
 import '../../common/routes/routes.dart';
 import '../../common/utils/datetime_helper.dart';
 
+import '../../common/widgets/buttons/custom_elevated_button.dart';
 import '../../common/widgets/seats/seat_normal.dart';
 import '../../common/widgets/seats/seat_vip.dart';
 import '../../common/widgets/seats/seat_booked.dart';
@@ -329,23 +330,12 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                         ],
                       ),
                       const Spacer(),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.productSelection,
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
-                        child: const Text(
-                          'Đặt vé',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
+                      CustomElevatedButton(
+                          text: "Đặt vé",
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pushNamed(Routes.productSelection);
+                          }),
                     ],
                   ),
                 )

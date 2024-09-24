@@ -8,6 +8,7 @@ import '../../common/constants/colors.dart';
 import '../../common/utils/datetime_helper.dart';
 import '../../common/models/product_combo.dart';
 import '../../common/services/product_combo_service.dart';
+import '../../common/widgets/buttons/custom_elevated_button.dart';
 
 class PaymentInfo extends StatefulWidget {
   const PaymentInfo({super.key});
@@ -353,18 +354,7 @@ class _PaymentInfoState extends State<PaymentInfo> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text(
-                      'Tiếp tục',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                  CustomElevatedButton(text: "Tiếp tục", onPressed: () => {})
                 ],
               ),
             )

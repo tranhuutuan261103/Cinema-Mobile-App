@@ -7,6 +7,7 @@ import '../../common/constants/colors.dart';
 import '../../common/models/product_combo.dart';
 import '../../common/services/product_combo_service.dart';
 import '../../common/routes/routes.dart';
+import '../../common/widgets/buttons/custom_elevated_button.dart';
 
 class ProductSelection extends StatefulWidget {
   const ProductSelection({super.key});
@@ -120,20 +121,11 @@ class _ProductSelectionState extends State<ProductSelection> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, Routes.paymentInfo);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: const Text(
-                    'Tiếp tục',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+                CustomElevatedButton(
+                    text: "Tiếp tục",
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(Routes.paymentInfo);
+                    })
               ],
             ),
           )
