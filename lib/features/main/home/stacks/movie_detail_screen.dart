@@ -8,11 +8,12 @@ import '../../../../../common/constants/colors.dart';
 import '../../../../../common/models/movie.dart';
 import '../../../../../common/models/comment.dart';
 import '../../../../../common/models/rating_count.dart';
+import '../../../../../common/services/comment_service.dart';
+import '../../../../../common/services/rating_service.dart';
 import '../../../../../common/routes/routes.dart';
 import '../../../../../common/widgets/comment_container.dart';
 import '../../../../../common/widgets/rating_movie_info.dart';
-import '../../../../../common/services/comment_service.dart';
-import '../../../../../common/services/rating_service.dart';
+import '../../../../../common/widgets/buttons/custom_elevated_button.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -390,21 +391,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   Widget _buildBookTicketButton(BuildContext context) {
     return SizedBox(
       width: double.infinity, // Makes the button take up 100% of the width
-      child: ElevatedButton(
-        onPressed: () {
-          // Navigate to the booking screen
-          Navigator.pushNamed(context, Routes.screeningSelectionByMovie,
-              arguments: widget.movie);
-        },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          textStyle: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        child: const Text('Đặt vé'),
-      ),
+      child: CustomElevatedButton(
+          text: "Đặt vé",
+          onPressed: () {
+            Navigator.of(context).pushNamed(Routes.screeningSelectionByMovie,
+                arguments: widget.movie);
+          }),
     );
   }
 }
