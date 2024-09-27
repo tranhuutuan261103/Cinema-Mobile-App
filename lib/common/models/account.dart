@@ -6,6 +6,7 @@ class Account {
   String? phoneNumber;
   String? address;
   String? avatarUrl;
+  String? backgroundUrl;
 
   Account({
     required this.username,
@@ -15,6 +16,7 @@ class Account {
     this.phoneNumber,
     this.address,
     this.avatarUrl,
+    this.backgroundUrl,
   });
 
   factory Account.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class Account {
       phoneNumber: json['phoneNumber'],
       address: json['address'],
       avatarUrl: json['avatarUrl'],
+      backgroundUrl: json['backgroundUrl'],
     );
   }
 
@@ -35,4 +38,16 @@ class Account {
         email = '',
         firstName = 'User',
         lastName = '';
+
+  Object? toJson() {
+    return {
+      'username': username,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'phoneNumber': phoneNumber,
+      'address': address,
+      'avatarUrl': avatarUrl,
+    };
+  }
 }

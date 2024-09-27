@@ -109,7 +109,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: double.infinity,
           height: 200,
           child: Image.network(
-            "https://preview.redd.it/10-10-event-v0-h6v5mggehl8c1.png?auto=webp&s=0d043feb11fb70a85a3b1ca79bdecfd67b288f52",
+            Provider.of<AuthProvider>(context).getUser?.backgroundUrl ??
+                "https://preview.redd.it/10-10-event-v0-h6v5mggehl8c1.png?auto=webp&s=0d043feb11fb70a85a3b1ca79bdecfd67b288f52",
             fit: BoxFit.cover,
           ),
         ),
@@ -193,7 +194,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               right: 0,
               child: Center(
                   child: Text(
-                Provider.of<AuthProvider>(context).getUser?.firstName ?? "",
+                "${Provider.of<AuthProvider>(context).getUser?.firstName ?? ""} ${Provider.of<AuthProvider>(context).getUser?.lastName ??
+                        ""}",
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
