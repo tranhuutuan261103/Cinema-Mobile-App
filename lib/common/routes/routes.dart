@@ -19,7 +19,8 @@ import '../../features/booking/seat_selection_screen.dart';
 import '../../features/booking/product_selection.dart';
 import '../../features/booking/payment_info.dart';
 
-import '../../features/stacks/settings_screen.dart';
+import '../../features/settings/settings_screen.dart';
+import '../../features/settings/stacks/edit_profile.dart';
 
 import '../../features/auth/login_screen.dart';
 
@@ -41,6 +42,7 @@ class Routes {
   static const String paymentInfo = "paymentInfo";
 
   static const String settingsScreen = "settings";
+  static const String editProfile = "editProfile";
 
   static const String login = "login";
 
@@ -113,6 +115,11 @@ class Routes {
       case settingsScreen:
         return MaterialPageRoute(
           builder: (context) => const SettingsScreen(),
+        );
+
+      case editProfile:
+        return MaterialPageRoute(
+          builder: (context) => const EditProfile(),
         );
 
       case login:

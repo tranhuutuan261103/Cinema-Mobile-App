@@ -62,4 +62,28 @@ class AccountService {
       throw Exception("Failed to update avatar: $e");
     }
   }
+
+  Future<Account> updateProfile(String token, Account account) async {
+    try {
+      final ioClient = getUnsafeIOClient();
+
+      final response = await ioClient.put(Uri.parse("$_baseUrl/profile"),
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+        body: json.encode(account.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return Account.fromJson(data);
+      } else {
+        throw Exception("Failed to update profile: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Failed to update profile: $e");
+    }
+  }
 }

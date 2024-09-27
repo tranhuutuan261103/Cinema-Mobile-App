@@ -83,6 +83,8 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('token');
+      _isAuthenticated = false;
+      notifyListeners();
       debugPrint(e.toString());
     }
   }
