@@ -87,21 +87,9 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     }
   }
 
-  double get _totalPrice {
-    List<Seat> seats = Provider.of<InvoiceProvider>(context).getSeats;
-    return seats.fold(
-        0,
-        (previousValue, seat) =>
-            previousValue +
-            seat.seatPrices
-                .firstWhere((seatPrice) =>
-                    seatPrice.personTypeId == _selectedPersonType.id)
-                .price);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final selectedSeats = Provider.of<InvoiceProvider>(context).getSeats;
+    final invoiceProvider = Provider.of<InvoiceProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -168,7 +156,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                                     onTap: () {
                                       _handleSeatSelection(seat);
                                     },
-                                    child: selectedSeats.contains(seat)
+                                    child: invoiceProvider.getSeats.contains(seat)
                                         ? SeatBooking(
                                             seat: seat,
                                             seatSize: widget.seatSize)
@@ -320,7 +308,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                           ),
                           const Spacer(),
                           Text(
-                            '$_totalPrice đ',
+                            '${invoiceProvider.getTotalPrice} đ',
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
