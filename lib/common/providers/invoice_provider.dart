@@ -60,6 +60,12 @@ class InvoiceProvider extends ChangeNotifier {
   List<Seat> get getSeats => _seats;
   List<Map<ProductCombo, int>> get getProductCombos => _productCombos;
 
+  double get getTotalSeattPrice {
+    return _seats.fold(0, (previousValue, seat) {
+      return previousValue + seat.seatPrices.first.price;
+    });
+  }
+
   double get getTotalProductPrice {
     double totalPrice = 0;
 

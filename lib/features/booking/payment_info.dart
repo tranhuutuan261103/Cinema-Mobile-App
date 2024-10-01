@@ -354,7 +354,9 @@ class _PaymentInfoState extends State<PaymentInfo> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  CustomElevatedButton(text: "Tiếp tục", onPressed: () => {})
+                  CustomElevatedButton(text: "Tiếp tục", onPressed: () => {
+                    Navigator.pushNamed(context, 'payment')
+                  })
                 ],
               ),
             )
