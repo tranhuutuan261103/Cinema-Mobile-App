@@ -216,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundColor: Colors.red[50],
                     value: 5,
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/');
+                      Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },
                   ),
                   _buildProfileButton(
@@ -226,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundColor: Colors.green[50],
                     value: 3,
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/');
+                      Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },
                   ),
                   _buildProfileButton(
@@ -234,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.star,
                     value: 5,
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/');
+                      Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },
                   ),
                   _buildProfileButton(
@@ -244,7 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundColor: Colors.blue[50],
                     value: 0,
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/');
+                      Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },
                   ),
                 ],

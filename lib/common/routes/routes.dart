@@ -14,12 +14,15 @@ import '../../features/main/auditorium/stacks/screening_selection_screen.dart';
 
 import '../../features/main/product/stacks/product_auditorium_selection.dart';
 
+import '../../features/main/profile/stacks/invoice_history.dart';
+
 // Booking
 import '../../features/booking/seat_selection_screen.dart';
 import '../../features/booking/product_selection.dart';
 import '../../features/booking/payment_info.dart';
 import '../../features/booking/payment.dart';
 
+// Settings
 import '../../features/settings/settings_screen.dart';
 import '../../features/settings/stacks/edit_profile.dart';
 
@@ -43,8 +46,10 @@ class Routes {
   static const String paymentInfo = "paymentInfo";
   static const String payment = "payment";
 
+  // Settings
   static const String settingsScreen = "settings";
   static const String editProfile = "editProfile";
+  static const String invoiceHistory = "invoiceHistory";
 
   static const String login = "login";
 
@@ -93,6 +98,12 @@ class Routes {
       case productAuditoriumSelection:
         return MaterialPageRoute(
           builder: (context) => const ProductAuditoriumSelection(),
+        );
+
+      // Profile page
+      case invoiceHistory:
+        return MaterialPageRoute(
+          builder: (context) => const InvoiceHistory(),
         );
 
       // Booking
