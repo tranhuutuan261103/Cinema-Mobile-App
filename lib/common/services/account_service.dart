@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/account.dart';
-import '../utils/unsafe_http_helper.dart';  // Update with the correct path
+import '../utils/unsafe_http_helper.dart'; // Update with the correct path
 
 class AccountService {
   final String _baseUrl = "${dotenv.env['API_URL']!}/account";
@@ -14,20 +14,29 @@ class AccountService {
     try {
       final ioClient = getUnsafeIOClient();
 
-      final response = await ioClient.get(Uri.parse("$_baseUrl/profile"),
+      final response = await ioClient.get(
+        Uri.parse("$_baseUrl/profile"),
         headers: {
           "Accept": "application/json",
           "Authorization": "Bearer $token",
         },
       );
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return Account.fromJson(data);
       } else {
-        throw Exception("Failed to get profile: ${response.statusCode}");
+        throw HttpException('Failed to load profile',
+            uri: Uri.parse("$_baseUrl/profile"));
       }
+    } on FormatException catch (e) {
+      throw FormatException("Invalid response format: $e");
+    } on SocketException {
+      throw Exception("No Internet connection. Please try again.");
+    } on HttpException catch (e) {
+      throw Exception("Server error: ${e.message}");
     } catch (e) {
-      return Account.empty();
+      throw Exception("Unexpected error occurred: $e");
     }
   }
 
@@ -36,10 +45,11 @@ class AccountService {
       final ioClient = getUnsafeIOClient();
 
       // Create a multipart request
-      final request = http.MultipartRequest('PUT', Uri.parse("$_baseUrl/avatar"))
-        ..headers.addAll({
-          "Authorization": "Bearer $token",
-        });
+      final request =
+          http.MultipartRequest('PUT', Uri.parse("$_baseUrl/avatar"))
+            ..headers.addAll({
+              "Authorization": "Bearer $token",
+            });
 
       // Attach the file to the request
       request.files.add(await http.MultipartFile.fromPath(
@@ -67,7 +77,8 @@ class AccountService {
     try {
       final ioClient = getUnsafeIOClient();
 
-      final response = await ioClient.put(Uri.parse("$_baseUrl/profile"),
+      final response = await ioClient.put(
+        Uri.parse("$_baseUrl/profile"),
         headers: {
           "Accept": "application/json",
           "Authorization": "Bearer $token",
