@@ -20,8 +20,9 @@ class _InvoiceHistoryState extends State<InvoiceHistory> {
   @override
   void initState() {
     super.initState();
+    String token = Provider.of<AuthProvider>(context, listen: false).getToken;
     setState(() {
-      futureInvoices = InvoiceService().getInvoices();
+      futureInvoices = InvoiceService().getInvoices(token);
     });
   }
 
@@ -43,6 +44,12 @@ class _InvoiceHistoryState extends State<InvoiceHistory> {
           future: futureInvoices,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              if (snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text('Bạn chưa mua vé nào'),
+                );
+              }
+
               return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {

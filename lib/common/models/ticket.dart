@@ -1,5 +1,4 @@
-import 'package:cinema_mobile_app/common/models/screening.dart';
-
+import './screening.dart';
 import './seat.dart';
 
 class Ticket {

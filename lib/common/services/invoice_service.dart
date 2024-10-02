@@ -9,16 +9,14 @@ import '../utils/unsafe_http_helper.dart';  // Update with the correct path
 class InvoiceService {
   final String _baseUrl = "${dotenv.env['API_URL']!}/invoices";
 
-  Future<List<Invoice>> getInvoices({String? token}) async {
+  Future<List<Invoice>> getInvoices(String token) async {
     try {
       final ioClient = getUnsafeIOClient();
 
-      final headers = token != null ? {
+      final headers =  {
         "Accept": "application/json",
         "Authorization": "Bearer $token",
-        } : {
-        "Accept": "application/json",
-      };
+        };
 
 
       final response = await ioClient.get(Uri.parse(_baseUrl), 
