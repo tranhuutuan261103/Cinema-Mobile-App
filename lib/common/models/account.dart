@@ -7,6 +7,9 @@ class Account {
   String? address;
   String? avatarUrl;
   String? backgroundUrl;
+  int invoiceCount;
+  int commentCount;
+  int movieRatedCount;
 
   Account({
     required this.username,
@@ -17,6 +20,9 @@ class Account {
     this.address,
     this.avatarUrl,
     this.backgroundUrl,
+    this.invoiceCount = 0,
+    this.commentCount = 0,
+    this.movieRatedCount = 0,
   });
 
   factory Account.fromJson(Map<String, dynamic> json) {
@@ -29,6 +35,9 @@ class Account {
       address: json['address'],
       avatarUrl: json['avatarUrl'],
       backgroundUrl: json['backgroundUrl'],
+      invoiceCount: (json['invoiceCount'] as num).toInt(),
+      commentCount: (json['commentCount'] as num).toInt(),
+      movieRatedCount: (json['movieRatedCount'] as num).toInt(),
     );
   }
 
@@ -37,7 +46,10 @@ class Account {
       : username = 'User',
         email = '',
         firstName = 'User',
-        lastName = '';
+        lastName = '',
+        invoiceCount = 0,
+        commentCount = 0,
+        movieRatedCount = 0;
 
   Object? toJson() {
     return {
