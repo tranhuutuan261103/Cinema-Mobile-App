@@ -8,6 +8,7 @@ import '../../../common/providers/auth_provider.dart';
 
 import '../../../common/routes/routes.dart';
 import '../../../common/constants/colors.dart';
+import '../../../common/models/account.dart';
 import '../../../common/services/account_service.dart';
 import '../../../common/widgets/not_found_container.dart';
 
@@ -103,6 +104,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileContent(BuildContext context) {
+    Account? user = Provider.of<AuthProvider>(context).getUser;
+
     return Column(
       children: [
         SizedBox(
@@ -214,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.local_movies,
                     color: Colors.red,
                     backgroundColor: Colors.red[50],
-                    value: 5,
+                    value: user?.invoiceCount ?? 0,
                     onPressed: () {
                       Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },
@@ -224,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.remove_red_eye,
                     color: Colors.green,
                     backgroundColor: Colors.green[50],
-                    value: 3,
+                    value: user?.movieRatedCount ?? 0,
                     onPressed: () {
                       Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },
@@ -232,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildProfileButton(
                     title: "Đánh giá",
                     icon: Icons.star,
-                    value: 5,
+                    value: user?.movieRatedCount ?? 0,
                     onPressed: () {
                       Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },
@@ -242,7 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.message,
                     color: Colors.blue,
                     backgroundColor: Colors.blue[50],
-                    value: 0,
+                    value: user?.commentCount ?? 0,
                     onPressed: () {
                       Navigator.of(context).pushNamed(Routes.invoiceHistory);
                     },

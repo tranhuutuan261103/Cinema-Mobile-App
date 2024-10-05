@@ -61,7 +61,6 @@ class AuthService {
       if (response.statusCode == 200) {
         return json.decode(response.body)["token"];
       } else {
-        print(response.body);
         throw Exception("Failed to login: ${response.statusCode}");
       }
     } catch (e) {
