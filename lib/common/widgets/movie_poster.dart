@@ -18,11 +18,15 @@ class MoviePoster extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              movie.imageUrl,
-              fit: BoxFit.cover,
-              height: 240,
-              width: 180,
+            child: 
+            AspectRatio(
+              aspectRatio: 9 / 12,
+              child: Image.network(
+                movie.imageUrl,
+                fit: BoxFit.cover,
+                height: 240,
+                width: double.infinity,
+              ),
             ),
           ),
           const SizedBox(height: 8),

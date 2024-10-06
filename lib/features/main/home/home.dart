@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../../../common/constants/colors.dart';
 import '../../../../common/models/movie.dart';
@@ -77,29 +78,37 @@ class _MyHomePageState extends State<HomePage> {
                     );
                   } else {
                     final movies = snapshot.data!;
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: movies.map((movie) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: MoviePoster(
-                                movie: movie,
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, Routes.movieDetail,
-                                      arguments: movie);
-                                }),
-                          );
-                        }).toList(),
+                    return CarouselSlider.builder(
+                      itemCount: movies.length,
+                      itemBuilder: (context, index, realIndex) {
+                        final movie = movies[index];
+                        return MoviePoster(
+                          movie: movie,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.movieDetail,
+                              arguments: movie,
+                            );
+                          },
+                        );
+                      },
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        aspectRatio: 1 / 1.2,
+                        enlargeCenterPage: true,
+                        viewportFraction : 0.6,
                       ),
                     );
                   }
                 },
+              ),
+              const Text(
+                "Phim sắp chiếu",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
