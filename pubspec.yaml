@@ -36,6 +36,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
 
+  shimmer: ^3.0.0
   carousel_slider: ^5.0.0
   expandable_text: ^2.3.0
   youtube_player_flutter: ^9.1.1

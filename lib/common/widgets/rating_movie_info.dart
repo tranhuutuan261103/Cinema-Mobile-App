@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
 import '../models/rating_count.dart';
+import '../utils/rating_helper.dart';
 
 class RatingMovieInfo extends StatelessWidget {
   final List<RatingCount> ratings;
@@ -40,7 +41,9 @@ class RatingMovieInfo extends StatelessWidget {
                   children: [
                     const Icon(Icons.star, color: colorPrimary),
                     Text(
-                      getAverageRating().toStringAsFixed(1),
+                      RatingHelper()
+                          .getAverageRating(ratings)
+                          .toStringAsFixed(1),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -49,7 +52,7 @@ class RatingMovieInfo extends StatelessWidget {
                     const Text('/10', style: TextStyle(fontSize: 10)),
                   ],
                 ),
-                Text('(${getTotalRating()} đánh giá)',
+                Text('(${RatingHelper().getTotalRating(ratings)} đánh giá)',
                     style: const TextStyle(
                       fontSize: 12,
                       color: Colors.grey,
@@ -82,15 +85,17 @@ class RatingMovieInfo extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 30,
-          child: Text("$min-$max", style: const TextStyle(fontSize: 12, height: 1.2))),
+            width: 30,
+            child: Text("$min-$max",
+                style: const TextStyle(fontSize: 12, height: 1.2))),
         Icon(Icons.star, color: Colors.grey[300], size: 12),
         const SizedBox(width: 12.0),
         Expanded(
           child: LinearProgressIndicator(
-            value: getTotalRating() == 0
+            value: RatingHelper().getTotalRating(ratings) == 0
                 ? 0
-                : getRatingCount(min, max) / getTotalRating(),
+                : RatingHelper().getRatingCount(ratings, min, max) /
+                    RatingHelper().getTotalRating(ratings),
             backgroundColor: Colors.grey[300],
             valueColor: const AlwaysStoppedAnimation<Color>(colorPrimary),
             borderRadius: BorderRadius.circular(5),
@@ -99,38 +104,5 @@ class RatingMovieInfo extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  int getTotalRating() {
-    int count = 0;
-    for (var i = 0; i < ratings.length; i++) {
-      count += ratings[i].count;
-    }
-    return count;
-  }
-
-  double getAverageRating() {
-    if (getTotalRating() == 0) {
-      return 0;
-    }
-    double total = 0;
-    for (var i = 0; i < ratings.length; i++) {
-      total += ratings[i].value * ratings[i].count;
-    }
-    return total / getTotalRating();
-  }
-
-  int getRatingCount(int min, [int max = 10]) {
-    try {
-      int count = 0;
-      for (var i = 0; i < ratings.length; i++) {
-        if (ratings[i].value >= min && ratings[i].value <= max) {
-          count += ratings[i].count;
-        }
-      }
-      return count;
-    } catch (e) {
-      return 0;
-    }
   }
 }

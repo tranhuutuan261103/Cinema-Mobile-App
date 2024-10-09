@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../../common/providers/auth_provider.dart';
 
@@ -10,6 +11,7 @@ import '../../../../common/models/comment.dart';
 import '../../../../common/models/rating_count.dart';
 import '../../../../common/services/comment_service.dart';
 import '../../../../common/services/rating_service.dart';
+import '../../../../common/utils/rating_helper.dart';
 import '../../../../common/routes/routes.dart';
 import '../../../../common/widgets/comment_container.dart';
 import '../../../../common/widgets/rating_movie_info.dart';
@@ -70,6 +72,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         }
       } else {
         // show a dialog to ask the user to login
+        if (!mounted) {
+          return;
+        }
         showDialog(
           context: context,
           builder: (context) {
@@ -173,7 +178,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     const SizedBox(height: 2),
                                     TrailerButton(
                                       onPressed: () {
-                                        showMovieTrailer(context, widget.movie.trailerUrl);
+                                        showMovieTrailer(
+                                            context, widget.movie.trailerUrl);
                                       },
                                     ),
                                   ],
@@ -205,8 +211,25 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              width: double.infinity,
+                              height: 100,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.black,
+                                child: const Center(
+                                  child: Text('Loading...'),
+                                ),
+                              ),
+                            ),
+                          );
                         }
                         if (snapshot.hasError) {
                           return const Center(
@@ -330,19 +353,49 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             color: colorPrimary,
           ),
           const SizedBox(width: 4),
-          const Text(
-            '9.5/10',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Text(
-            ' (1000 đánh giá)',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+          FutureBuilder<List<RatingCount>>(
+            future: _ratingsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text(
+                  'Đang tải đánh giá...',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                );
+              } else {
+                if (snapshot.hasError) {
+                  return const Text(
+                    'Không có đánh giá',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  );
+                } else {
+                  final ratings = snapshot.data!;
+                  return Row(
+                    children: [
+                      Text(
+                        '${RatingHelper().getAverageRating(ratings).toStringAsFixed(1)}/10',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Text(
+                        ' (${RatingHelper().getTotalRating(ratings)} đánh giá)',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }
+            },
           ),
           const Spacer(),
           TextButton(
