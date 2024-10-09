@@ -7,6 +7,7 @@ class Movie {
   final String description;
   final String language;
   final String imageUrl;
+  final String trailerUrl;
   final String director;
   final String actors;
   final double rating;
@@ -21,6 +22,7 @@ class Movie {
     required this.description,
     required this.language,
     required this.imageUrl,
+    required this.trailerUrl,
     required this.director,
     required this.actors,
     required this.rating,
@@ -45,6 +47,7 @@ class Movie {
       description: json['description'] ?? '',
       language: json['language'] ?? '',
       imageUrl: posterImage,
+      trailerUrl: json['trailerUrl'] ?? '',
       director: json['director'] ?? '',
       actors: json['actors'] ?? '',
       rating: (json['rating'] as num).toDouble(),

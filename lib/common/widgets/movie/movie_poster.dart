@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/movie.dart';
+import '../../models/movie.dart';
 
 class MoviePoster extends StatelessWidget {
   const MoviePoster({super.key, required this.movie, required this.onTap});

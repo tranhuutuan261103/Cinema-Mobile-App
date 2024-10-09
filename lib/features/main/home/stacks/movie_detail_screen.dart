@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../common/providers/auth_provider.dart';
+import '../../../../common/providers/auth_provider.dart';
 
-import '../../../../../common/constants/colors.dart';
-import '../../../../../common/models/movie.dart';
-import '../../../../../common/models/comment.dart';
-import '../../../../../common/models/rating_count.dart';
-import '../../../../../common/services/comment_service.dart';
-import '../../../../../common/services/rating_service.dart';
-import '../../../../../common/routes/routes.dart';
-import '../../../../../common/widgets/comment_container.dart';
-import '../../../../../common/widgets/rating_movie_info.dart';
-import '../../../../../common/widgets/buttons/custom_elevated_button.dart';
+import '../../../../common/constants/colors.dart';
+import '../../../../common/models/movie.dart';
+import '../../../../common/models/comment.dart';
+import '../../../../common/models/rating_count.dart';
+import '../../../../common/services/comment_service.dart';
+import '../../../../common/services/rating_service.dart';
+import '../../../../common/routes/routes.dart';
+import '../../../../common/widgets/comment_container.dart';
+import '../../../../common/widgets/rating_movie_info.dart';
+import '../../../../common/widgets/buttons/custom_elevated_button.dart';
+import '../../../../common/widgets/buttons/trailer_button.dart';
+import '../../../stacks/movie_trailer.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -152,12 +154,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                       style: const TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
+                                        height: 1.2,
                                       ),
                                       maxLines: 2,
                                       overflow: TextOverflow
                                           .ellipsis, // Handle overflow
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: 2),
                                     Text(
                                       widget.movie.categories
                                           .map((category) => category.name)
@@ -166,6 +169,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                       overflow: TextOverflow
                                           .ellipsis, // Handle overflow
                                       maxLines: 2,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    TrailerButton(
+                                      onPressed: () {
+                                        showMovieTrailer(context, widget.movie.trailerUrl);
+                                      },
                                     ),
                                   ],
                                 ),
