@@ -3,7 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../../../common/constants/colors.dart';
 import '../../../../common/models/movie.dart';
-import '../../../../common/widgets/movie_poster.dart';
+import '../../../../common/widgets/movie/movie_poster.dart';
 import '../../../../common/widgets/not_found_container.dart';
 import '../../../../common/services/movie_service.dart';
 import '../../../../common/routes/routes.dart';

@@ -38,6 +38,7 @@ dependencies:
 
   carousel_slider: ^5.0.0
   expandable_text: ^2.3.0
+  youtube_player_flutter: ^9.1.1
 
   rename_app: ^1.6.1
   http: ^1.1.2
