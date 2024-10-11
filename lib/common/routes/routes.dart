@@ -4,6 +4,7 @@ import '../models/movie.dart';
 import '../models/auditorium.dart';
 import '../models/screening.dart';
 import '../models/comment.dart';
+import '../models/invoice.dart';
 
 import '../../features/main/main_page.dart';
 import '../../features/main/home/stacks/movie_detail_screen.dart';
@@ -15,6 +16,7 @@ import '../../features/main/auditorium/stacks/screening_selection_screen.dart';
 import '../../features/main/product/stacks/product_auditorium_selection.dart';
 
 import '../../features/main/profile/stacks/invoice_history.dart';
+import '../../features/main/profile/stacks/invoice_history_detail.dart';
 
 // Booking
 import '../../features/booking/seat_selection_screen.dart';
@@ -49,7 +51,9 @@ class Routes {
   // Settings
   static const String settingsScreen = "settings";
   static const String editProfile = "editProfile";
+
   static const String invoiceHistory = "invoiceHistory";
+  static const String invoiceHistoryDetail = "invoiceHistoryDetail";
 
   static const String login = "login";
 
@@ -104,6 +108,13 @@ class Routes {
       case invoiceHistory:
         return MaterialPageRoute(
           builder: (context) => const InvoiceHistory(),
+        );
+
+      case invoiceHistoryDetail:
+        return MaterialPageRoute(
+          builder: (context) => InvoiceHistoryDetail(
+            invoice: (settings.arguments as Invoice),
+          ),
         );
 
       // Booking
