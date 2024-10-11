@@ -6,6 +6,7 @@ import '../../../../common/providers/auth_provider.dart';
 import '../../../../common/constants/colors.dart';
 import '../../../../common/models/invoice.dart';
 import '../../../../common/services/invoice_service.dart';
+import '../../../../common/routes/routes.dart';
 
 class InvoiceHistory extends StatefulWidget {
   const InvoiceHistory({super.key});
@@ -53,7 +54,13 @@ class _InvoiceHistoryState extends State<InvoiceHistory> {
               return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
-                  return _buildInvoiceCard(snapshot.data![index]);
+                  return Column(
+                    children: [
+                      _buildInvoiceCard(snapshot.data![index]),
+                      if (index != snapshot.data!.length - 1)
+                        const SizedBox(height: 16),
+                    ],
+                  );
                 },
               );
             } else if (snapshot.hasError) {
@@ -69,7 +76,20 @@ class _InvoiceHistoryState extends State<InvoiceHistory> {
   }
 
   Widget _buildInvoiceCard(Invoice invoice) {
-    return Card(
+    return MaterialButton(
+      onPressed: () {
+        try {
+          getInvoiceById(invoice.id).then((value) {
+            Navigator.pushNamed(context, Routes.invoiceHistoryDetail, arguments: value);
+          });
+        } catch (e) {
+          const SnackBar(content: Text('Failed to load invoice'));
+        }
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      padding: const EdgeInsets.all(0),
       child: SizedBox(
         width: double.infinity,
         height: 100,
@@ -126,5 +146,11 @@ class _InvoiceHistoryState extends State<InvoiceHistory> {
         ),
       ),
     );
+  }
+
+  Future<Invoice> getInvoiceById(int id) async {
+    final String token =
+        Provider.of<AuthProvider>(context, listen: false).getToken;
+    return InvoiceService().getInvoiceById(token, id);
   }
 }
