@@ -17,6 +17,7 @@ import '../../common/widgets/seats/seat_normal.dart';
 import '../../common/widgets/seats/seat_vip.dart';
 import '../../common/widgets/seats/seat_booked.dart';
 import '../../common/widgets/seats/seat_booking.dart';
+import '../../common/widgets/modals/message_modal.dart';
 
 class SeatSelectionScreen extends StatefulWidget {
   final Auditorium auditorium;
@@ -321,6 +322,17 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                       CustomElevatedButton(
                           text: "Đặt vé",
                           onPressed: () {
+                            if (invoiceProvider.getSeats.isEmpty) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const MessageModal(
+                                      title: 'Thông báo',
+                                      message: 'Vui lòng chọn ghế trước khi đặt vé',
+                                    );
+                                  });
+                              return;
+                            }
                             Navigator.of(context)
                                 .pushNamed(Routes.productSelection);
                           }),

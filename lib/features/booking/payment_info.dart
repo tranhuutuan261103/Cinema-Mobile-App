@@ -8,7 +8,10 @@ import '../../common/constants/colors.dart';
 import '../../common/utils/datetime_helper.dart';
 import '../../common/models/product_combo.dart';
 import '../../common/services/product_combo_service.dart';
+import '../../common/routes/routes.dart';
 import '../../common/widgets/buttons/custom_elevated_button.dart';
+import '../../common/widgets/buttons/trailer_button.dart';
+import '../stacks/movie_trailer.dart';
 
 class PaymentInfo extends StatefulWidget {
   const PaymentInfo({super.key});
@@ -29,6 +32,7 @@ class _PaymentInfoState extends State<PaymentInfo> {
   @override
   Widget build(BuildContext context) {
     final invoiceProvider = Provider.of<InvoiceProvider>(context);
+    final userProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -119,6 +123,24 @@ class _PaymentInfoState extends State<PaymentInfo> {
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                           ),
+                                        ),
+                                        Text(
+                                          invoiceProvider
+                                              .getScreening!.movie!.categories
+                                              .map((e) => e.name)
+                                              .join(", "),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        TrailerButton(
+                                          onPressed: () => {
+                                            showMovieTrailer(
+                                                context,
+                                                invoiceProvider.getScreening!
+                                                    .movie!.trailerUrl)
+                                          },
                                         ),
                                       ],
                                     ),
@@ -294,34 +316,61 @@ class _PaymentInfoState extends State<PaymentInfo> {
                             fontWeight: FontWeight.bold,
                           )),
                       const SizedBox(height: 8),
-                      Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      '${Provider.of<AuthProvider>(context).user!.firstName} ${Provider.of<AuthProvider>(context).user!.lastName}',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  Text(Provider.of<AuthProvider>(context)
-                                      .user!
-                                      .email),
-                                ],
+                      userProvider.user != null
+                          ? Container(
+                              width: double.infinity,
+                              height: 60,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const Icon(Icons.edit, color: colorPrimary),
-                            ],
-                          ))
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          '${Provider.of<AuthProvider>(context).user!.firstName} ${Provider.of<AuthProvider>(context).user!.lastName}',
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                      Text(Provider.of<AuthProvider>(context)
+                                          .user!
+                                          .email),
+                                    ],
+                                  ),
+                                  IconButton(
+                                    onPressed: () => {
+                                      Navigator.pushNamed(
+                                          context, Routes.editProfile)
+                                    },
+                                    icon: const Icon(Icons.edit,
+                                        color: colorPrimary),
+                                  ),
+                                ],
+                              ))
+                          : MaterialButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, Routes.login);
+                              },
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.all(0),
+                              elevation: 0,
+                              height: 60,
+                              color: Colors.white,
+                              child: const Center(
+                                child: Text(
+                                    "Vui lòng đăng nhập để tiếp tục mua vé"),
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -354,9 +403,15 @@ class _PaymentInfoState extends State<PaymentInfo> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  CustomElevatedButton(text: "Tiếp tục", onPressed: () => {
-                    Navigator.pushNamed(context, 'payment')
-                  })
+                  CustomElevatedButton(
+                    text: "Tiếp tục",
+                    onPressed: () => {
+                      if (userProvider.user != null)
+                        {Navigator.pushNamed(context, Routes.payment)}
+                      else
+                        {Navigator.pushNamed(context, Routes.login)}
+                    },
+                  )
                 ],
               ),
             )
