@@ -1,13 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/providers/auth_provider.dart';
 import '../../common/providers/invoice_provider.dart';
 
 import '../../common/constants/colors.dart';
+import '../../common/services/invoice_service.dart';
+import '../../common/routes/routes.dart';
 import '../../common/widgets/buttons/custom_elevated_button.dart';
 
 class Payment extends StatelessWidget {
   const Payment({super.key});
+
+  Future<void> _pay(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) {
+      Navigator.of(context).pushNamed(Routes.login);
+      return;
+    }
+
+    final invoiceProvider =
+        Provider.of<InvoiceProvider>(context, listen: false);
+
+    if (invoiceProvider.getScreening == null ||
+        invoiceProvider.getSeats.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Vui lòng chọn ghế trước khi thanh toán"),
+        ),
+      );
+      return;
+    }
+
+    final invoiceService = InvoiceService();
+
+    try {
+      final invoice = await invoiceService.createInvoice(authProvider.token,
+          invoiceProvider.getScreening!, invoiceProvider.getSeats);
+      Navigator.of(context).pushNamed(Routes.invoiceHistoryDetail, arguments: invoice);
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Thanh toán thất bại"),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +154,9 @@ class Payment extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 CustomElevatedButton(
-                    text: "Thanh toán",
-                    onPressed: () {
-                    })
+                  text: "Thanh toán",
+                  onPressed: () => _pay(context),
+                ),
               ],
             ),
           )
