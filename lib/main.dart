@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Provider.of<AuthProvider>(context, listen: false);
+    Provider.of<ProvinceProvider>(context, listen: false);
 
     return MaterialApp(
       title: 'Tune Cinema',
