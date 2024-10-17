@@ -24,8 +24,11 @@ class ProvinceProvider extends ChangeNotifier {
   Future<void> _loadProvince() async {
     final prefs = await SharedPreferences.getInstance();
     final provinceId = prefs.getInt('provinceId');
-    if (provinceId != null) {
-      _selectedProvince = _provinces.firstWhere((province) => province.id == provinceId);
+    final provinceName = prefs.getString('provinceName');
+    if (provinceId != null && provinceName != null) {
+      _selectedProvince = Province(id: provinceId, name: provinceName);
+    } else {
+      _selectedProvince = Province(id: 1, name: "Hà Nội");
     }
     notifyListeners();
   }
@@ -46,6 +49,7 @@ class ProvinceProvider extends ChangeNotifier {
     _selectedProvince = province;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('provinceId', province.id);
+    await prefs.setString('provinceName', province.name);
     notifyListeners();
   }
 }
