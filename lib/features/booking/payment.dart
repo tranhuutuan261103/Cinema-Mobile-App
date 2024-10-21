@@ -36,7 +36,7 @@ class Payment extends StatelessWidget {
 
     try {
       final invoice = await invoiceService.createInvoice(authProvider.token,
-          invoiceProvider.getScreening!, invoiceProvider.getSeats);
+          invoiceProvider.getScreening!, invoiceProvider.getSeats, invoiceProvider.getProductCombos);
       Navigator.of(context).pushNamed(Routes.invoiceHistoryDetail, arguments: invoice);
     } catch (e) {
       print(e);

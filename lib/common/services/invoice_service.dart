@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/invoice.dart';
 import '../models/screening.dart';
+import '../models/product_combo.dart';
 import '../utils/unsafe_http_helper.dart'; // Update with the correct path
 
 class InvoiceService {
@@ -66,7 +67,7 @@ class InvoiceService {
     }
   }
 
-  Future<Invoice> createInvoice(String token, Screening screening, List<Seat> seats) async {
+  Future<Invoice> createInvoice(String token, Screening screening, List<Seat> seats, List<Map<ProductCombo, int>> products) async {
     try {
       final ioClient = getUnsafeIOClient();
 
@@ -85,6 +86,10 @@ class InvoiceService {
           "seats": seats.map((seat) => {
             "id": seat.id,
             "personTypeId": 1,
+          }).toList(),
+          "productCombos": products.map((product) => {
+            "id": product.keys.first.id,
+            "quantity": product.values.first,
           }).toList(),
           "dateOfPurchase": DateTime.now().toIso8601String(),
         }
