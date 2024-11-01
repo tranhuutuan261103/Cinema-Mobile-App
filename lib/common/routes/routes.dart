@@ -9,6 +9,7 @@ import '../models/invoice.dart';
 import '../../features/main/main_page.dart';
 import '../../features/main/home/stacks/movie_detail_screen.dart';
 import '../../features/main/home/stacks/comment_detail_screen.dart';
+import '../../features/main/home/stacks/comment_movie.dart';
 import '../../features/main/home/stacks/screening_selection_by_movie.dart';
 
 import '../../features/main/auditorium/stacks/screening_selection_screen.dart';
@@ -36,6 +37,7 @@ class Routes {
   static const String home = "home";
   static const String movieDetail = "movieDetail";
   static const String commentDetailScreen = "commentDetailScreen";
+  static const String commentMovie = "commentMovie";
   static const String screeningSelectionByMovie = "screeningSelectionByMovie";
 
   static const String screeningSelectionScreen = "screeningSelectionScreen";
@@ -81,6 +83,13 @@ class Routes {
           builder: (context) => CommentDetailScreen(
             comment: (settings.arguments as List)[0] as Comment,
             movie: (settings.arguments as List)[1] as Movie,
+          ),
+        );
+
+      case commentMovie:
+        return MaterialPageRoute(
+          builder: (context) => CommentMovie(
+            movie: settings.arguments as Movie,
           ),
         );
 

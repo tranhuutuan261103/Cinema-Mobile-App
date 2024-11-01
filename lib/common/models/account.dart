@@ -35,9 +35,9 @@ class Account {
       address: json['address'],
       avatarUrl: json['avatarUrl'],
       backgroundUrl: json['backgroundUrl'],
-      invoiceCount: (json['invoiceCount'] as num).toInt(),
-      commentCount: (json['commentCount'] as num).toInt(),
-      movieRatedCount: (json['movieRatedCount'] as num).toInt(),
+      invoiceCount: json['invoiceCount'] != null ? (json['invoiceCount'] as num).toInt() : 0,
+      commentCount: json['commentCount'] != null ? (json['commentCount'] as num).toInt() : 0,
+      movieRatedCount: json['movieRatedCount'] != null ? (json['movieRatedCount'] as num).toInt() : 0,
     );
   }
 
