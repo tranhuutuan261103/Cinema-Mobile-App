@@ -400,7 +400,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           const Spacer(),
           TextButton(
               onPressed: () {
-                print("View all comments");
+                Navigator.pushNamed(
+                  context,
+                  Routes.commentMovie,
+                  arguments: widget.movie,
+                );
               },
               style: ButtonStyle(
                   overlayColor: WidgetStateProperty.all(Colors.transparent)),

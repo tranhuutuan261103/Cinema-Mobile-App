@@ -20,8 +20,7 @@ class CommentService {
         "Accept": "application/json",
       };
 
-
-      final response = await ioClient.get(Uri.parse("$_baseUrl?movieId=$movieId"), 
+      final response = await ioClient.get(Uri.parse("$_baseUrl?movieId=$movieId&maxSize=10"), 
         headers: headers
       );
       if (response.statusCode == 200) {
