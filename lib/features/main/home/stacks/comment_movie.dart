@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../common/providers/auth_provider.dart';
 
 import '../../../../common/constants/colors.dart';
 import '../../../../common/models/movie.dart';
+import '../../../../common/services/comment_service.dart';
+import '../../../../common/routes/routes.dart';
 import '../../../../common/widgets/buttons/custom_elevated_button.dart';
 
 class CommentMovie extends StatefulWidget {
@@ -18,8 +23,39 @@ class _CommentMovieState extends State<CommentMovie> {
   int ratingValue = 0;
   TextEditingController commentController = TextEditingController();
 
+  Future<void> createComment() async {
+    if (ratingValue == 0) {
+      return;
+    }
+
+    if (commentController.text.isEmpty) {
+      return;
+    }
+
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final commentService = CommentService();
+
+    try {
+      await commentService.createComment(
+          auth.getToken, widget.movie.id, commentController.text, ratingValue);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Đã xảy ra lỗi khi gửi đánh giá"),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorPrimary,
@@ -51,11 +87,14 @@ class _CommentMovieState extends State<CommentMovie> {
                               fit: BoxFit.cover,
                             )),
                         const SizedBox(width: 8),
-                        Text(widget.movie.title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            )),
+                        Expanded(
+                          child: Text(widget.movie.title,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                        ),
                       ],
                     ),
                   ),
@@ -81,7 +120,9 @@ class _CommentMovieState extends State<CommentMovie> {
                                   });
                                 },
                                 child: Icon(
-                                  i <= ratingValue ? Icons.star : Icons.star_border,
+                                  i <= ratingValue
+                                      ? Icons.star
+                                      : Icons.star_border,
                                   color: colorPrimary,
                                   size: 30,
                                 ),
@@ -127,10 +168,17 @@ class _CommentMovieState extends State<CommentMovie> {
               ),
             ),
           ),
-          Padding(
+          Container(
             padding: const EdgeInsets.all(16.0),
+            width: double.infinity,
             child: CustomElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                if (auth.isAuthenticated == false) {
+                  Navigator.pushNamed(context, Routes.login);
+                } else {
+                  await createComment();
+                }
+              },
               text: "Gửi đánh giá",
             ),
           ),
